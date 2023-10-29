@@ -1,0 +1,63 @@
+﻿@page "/"
+@using PanoramicData.Blazor;
+@using PanoramicData.NCalc101.Models
+
+<PageTitle>NCalc 101</PageTitle>
+
+<div class="row">
+	<div class="col-12">
+		<PDTextArea @bind-Value="Expression" Keypress="OnKeyPressedAsync"/>
+	</div>
+</div>
+<div class="row">
+	<div class="col-6">
+		<PDToolbar>
+			<PDToolbarButton Text="Add String"
+							 CssClass="btn-primary"
+							 Click="AddVariableAsync<string>" />
+			<PDToolbarButton Text="Add Integer"
+							 CssClass="btn-primary"
+							 Click="AddVariableAsync<int>" />
+			<PDToolbarButton Text="Add DateTime"
+							 CssClass="btn-primary"
+							 Click="AddVariableAsync<DateTime>" />
+		</PDToolbar>
+		<PDTable
+			TItem="Variable"
+			@ref = "_table"
+			DataProvider="_variableDataProviderService"
+			CssClass="variable-table"
+			AllowEdit="true"
+			AfterEdit="OnVariableChangedAsync"
+			UserSelectable="true"
+		>
+			<PDColumn TItem="Variable"
+					  Id="Type"
+					  Title="Type">
+				<Template>
+					@context.Type.ToString()
+				</Template>
+			</PDColumn>
+			<PDColumn TItem="Variable"
+					  Id="Name"
+					  Title="Name"
+					  Editable="true" 
+					  Field="v => v.Name" />
+			<PDColumn TItem="Variable"
+					  Id="Value"
+					  Title="Value"
+					  Editable="true"
+					  Field="v => v.ValueAsString" />
+		</PDTable>
+	</div>
+	<div class="col-6">
+		@if (_exceptionMessage == string.Empty)
+		{
+			<PDTextArea @bind-Value="_result" CssClass="result" IsReadOnly="true" />
+		}
+		else
+		{
+			<PDTextArea @bind-Value="_exceptionMessage" CssClass="result" IsReadOnly="true" />
+		}
+	</div>
+</div>

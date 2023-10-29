@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34212.112
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PanoramicData.NCalc101", "PanoramicData.NCalc101\PanoramicData.NCalc101.csproj", "{EE7EBACB-DBC1-402E-8FC9-90E5ADA8EBEB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EE7EBACB-DBC1-402E-8FC9-90E5ADA8EBEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE7EBACB-DBC1-402E-8FC9-90E5ADA8EBEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE7EBACB-DBC1-402E-8FC9-90E5ADA8EBEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE7EBACB-DBC1-402E-8FC9-90E5ADA8EBEB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DB80D755-E25E-4570-87AD-37D09559BAC0}
+	EndGlobalSection
+EndGlobal
