@@ -1,5 +1,7 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
+﻿@using System.Reflection
+@using PanoramicData.NCalcExtensions
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid" title="@PageTitle">
         <a class="navbar-brand" href=""><img src="favicon.png" style="height: 2em;" /> NCalc 101</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
@@ -31,4 +33,6 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
+
+    private string PageTitle => $"NCalc 101 v{ThisAssembly.AssemblyFileVersion} (using NCalcExtensions v{Assembly.GetAssembly(typeof(ExtendedExpression))?.GetName().Version})";
 }

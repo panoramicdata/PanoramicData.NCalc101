@@ -8,21 +8,21 @@
 <div class="row">
 	<div class="col-12">
 		<h3><i class="fa-solid fa-keyboard" /> Input</h3>
-		<PDTextArea Value="@Expression" ValueChanged="OnValueChangedAsync" />
+		<PDTextArea Value="@Expression" ValueChanged="OnExpressionChangedAsync" />
 	</div>
 </div>
 <div class="row mt-3">
 	<div class="col-12">
 		@if (_exceptionMessage == string.Empty)
-		{
-			<h3><i class="fa-solid fa-check-circle" /> Output (@_resultType)</h3>
-			<PDTextArea @bind-Value="_result" CssClass="result" IsReadOnly="true" />
-		}
-		else
-		{
-			<h3><i class="fa-solid fa-warning" /> Error</h3>
-			<PDTextArea @bind-Value="_exceptionMessage" CssClass="result" IsReadOnly="true" />
-		}
+	{
+		<h3><i class="fa-solid fa-check-circle" /> Output (@_resultType)</h3>
+		<PDTextArea @bind-Value="_result" CssClass="result" IsReadOnly="true" />
+	}
+	else
+	{
+		<h3><i class="fa-solid fa-warning" /> Error</h3>
+		<PDTextArea @bind-Value="_exceptionMessage" CssClass="result" IsReadOnly="true" />
+	}
 	</div>
 </div>
 <div class="row mt-3">
@@ -53,6 +53,11 @@
 							 IconCssClass="fa-regular fa-clock"
 							 CssClass="btn-primary"
 							 Click="AddVariableAsync<DateTimeOffset>" />
+			<PDToolbarButton Text="Delete Variable"
+							 IsEnabled="@(_table!.Selection is not null)"
+							 IconCssClass="fa-regular fa-trash"
+							 CssClass="btn-secondary"
+							 Click="DeleteRowAsync" />
 		</PDToolbar>
 		<PDTable
 			TItem="Variable"
@@ -63,27 +68,33 @@
 			DoubleClick="OnDoubleClickRowAsync"
 			AfterEdit="OnVariableChangedAsync"
 			UserSelectable="true"
-			KeyField="v => v.Name"
-			SelectionMode="TableSelectionMode.Single"
+			KeyField="v => v.Id"
+			SelectionMode="TableSelectionMode.Multiple"
 		>
 			<PDColumn TItem="Variable"
 					  Id="Type"
 					  Title="Type">
 				<Template>
-					<i class="@context.FontAwesome" />
+					<i class="@context.GetFontAwesome()" />
 					@context.Type.ToString()
 				</Template>
 			</PDColumn>
 			<PDColumn TItem="Variable"
+					  Id="Id"
+					  Title="Id"
+					  ShowInList="false"
+					  Editable="false" 
+					  Field="v => v.Id" />
+			<PDColumn TItem="Variable"
 					  Id="Name"
 					  Title="Name"
-					  Editable="true" 
+					  Editable="true"
 					  Field="v => v.Name" />
 			<PDColumn TItem="Variable"
 					  Id="Value"
 					  Title="Value"
 					  Editable="true"
-					  Field="v => v.ValueAsString" />
+					  Field="v => v.Value" />
 		</PDTable>
 	</div>
 </div>

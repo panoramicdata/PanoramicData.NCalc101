@@ -1,53 +1,43 @@
 ﻿namespace PanoramicData.NCalc101.Models;
 
-public class Variable
+public class Variable(string name, string type, object? @object)
 {
-	public required Type Type { get; set; }
+	[field: NonSerialized]
+	public Guid Id { get; } = Guid.NewGuid();
 
-	public required string Name { get; set; } = string.Empty;
+	public string Type { get; } = type;
 
-	public required string ValueAsString { get; set; }
+	public string Name { get; } = name;
 
-	public object? Value => Type switch
+	public string Value { get; set; } = @object?.ToString() ?? string.Empty;
+
+	internal object? GetValue() => Type switch
 	{
-		Type t when t == typeof(bool) => bool.Parse(ValueAsString),
-		Type t when t == typeof(byte) => byte.Parse(ValueAsString),
-		Type t when t == typeof(char) => char.Parse(ValueAsString),
-		Type t when t == typeof(DateTime) => DateTime.Parse(ValueAsString),
-		Type t when t == typeof(DateTimeOffset) => DateTimeOffset.Parse(ValueAsString),
-		Type t when t == typeof(decimal) => decimal.Parse(ValueAsString),
-		Type t when t == typeof(double) => double.Parse(ValueAsString),
-		Type t when t == typeof(float) => float.Parse(ValueAsString),
-		Type t when t == typeof(int) => int.Parse(ValueAsString),
-		Type t when t == typeof(long) => long.Parse(ValueAsString),
-		Type t when t == typeof(sbyte) => sbyte.Parse(ValueAsString),
-		Type t when t == typeof(short) => short.Parse(ValueAsString),
-		Type t when t == typeof(string) => ValueAsString,
-		Type t when t == typeof(uint) => uint.Parse(ValueAsString),
-		Type t when t == typeof(ulong) => ulong.Parse(ValueAsString),
-		Type t when t == typeof(ushort) => ushort.Parse(ValueAsString),
+		"System.Boolean" => bool.Parse(Value),
+		"System.Byte" => byte.Parse(Value),
+		"System.Char" => char.Parse(Value),
+		"System.DateTime" => DateTime.Parse(Value),
+		"System.DateTimeOffset" => DateTimeOffset.Parse(Value),
+		"System.Decimal" => decimal.Parse(Value),
+		"System.Double" => double.Parse(Value),
+		"System.Single" => float.Parse(Value),
+		"System.Int32" => int.Parse(Value),
+		"System.Int64" => long.Parse(Value),
+		"System.SByte" => sbyte.Parse(Value),
+		"System.Int16" => short.Parse(Value),
+		"System.String" => Value,
+		"null" => null,
 		_ => throw new InvalidOperationException($"Unsupported type: {Type}"),
 	};
 
-
-	public string FontAwesome => Type switch
+	internal object? GetFontAwesome() => Type switch
 	{
-		Type t when t == typeof(bool) => "fa-solid fa-toggle-on",
-		Type t when t == typeof(byte) => "fa-solid fa-ban",
-		Type t when t == typeof(char) => "fa-solid fa-ban",
-		Type t when t == typeof(DateTime) => "fa-solid fa-clock",
-		Type t when t == typeof(DateTimeOffset) => "fa-regular fa-clock",
-		Type t when t == typeof(decimal) => "fa-solid fa-ban",
-		Type t when t == typeof(double) => "fa-solid fa-temperature-half",
-		Type t when t == typeof(float) => "fa-solid fa-ban",
-		Type t when t == typeof(int) => "fa-solid fa-1",
-		Type t when t == typeof(long) => "fa-solid fa-ban",
-		Type t when t == typeof(sbyte) => "fa-solid fa-ban",
-		Type t when t == typeof(short) => "fa-solid fa-ban",
-		Type t when t == typeof(string) => "fa-solid fa-a",
-		Type t when t == typeof(uint) => "fa-solid fa-ban",
-		Type t when t == typeof(ulong) => "fa-solid fa-ban",
-		Type t when t == typeof(ushort) => "fa-solid fa-ban",
+		"System.Boolean" => "fa-solid fa-toggle-on",
+		"System.DateTime" => "fa-solid fa-clock",
+		"System.DateTimeOffset" => "fa-regular fa-clock",
+		"System.Double" => "fa-solid fa-temperature-half",
+		"System.Int32" => "fa-solid fa-1",
+		"System.String" => "fa-solid fa-a",
 		_ => "fa-solid fa-ban",
 	};
 }

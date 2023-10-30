@@ -20,11 +20,16 @@ public partial class Home
 	private PDTable<Variable>? _table;
 	private string _result = string.Empty;
 	private string _resultType = string.Empty;
-	private readonly VariableDataProviderService _variableDataProviderService = new(default);
+	private VariableDataProviderService _variableDataProviderService = new(default);
 	private string _exceptionMessage = string.Empty;
 
 	protected override async Task OnInitializedAsync()
 	{
+		if (!string.IsNullOrWhiteSpace(HttpEncodedJsonVariables))
+		{
+			_variableDataProviderService = new(HttpEncodedJsonVariables);
+		}
+
 		await EvaluateAsync();
 		await base.OnInitializedAsync();
 	}
@@ -32,13 +37,31 @@ public partial class Home
 	private async Task AddVariableAsync<T>()
 	{
 		var variableName = await GetUnusedVariableNameAsync();
+		await _variableDataProviderService.CreateAsync(new Variable(variableName, typeof(T).ToString(), default(T)), CancellationToken.None);
+		await _table!.RefreshAsync();
+	}
 
-		await _variableDataProviderService.CreateAsync(new Variable
+	private async Task DeleteRowAsync()
+	{
+		var rowIds = _table!.Selection;
+		if (rowIds is null || rowIds.Count == 0)
 		{
-			Type = typeof(T),
-			Name = variableName,
-			ValueAsString = default(T)?.ToString() ?? string.Empty
-		}, CancellationToken.None);
+			return;
+		}
+
+		var existingVariables = await _variableDataProviderService
+			.GetDataAsync(new DataRequest<Variable>(), CancellationToken.None);
+		var existingVariablesForDeletion = existingVariables
+			.Items
+			.Where(v => rowIds.Contains(v.Id.ToString().ToLowerInvariant()))
+			.ToList();
+
+		foreach (var variableForDeletion in existingVariablesForDeletion)
+		{
+			await _variableDataProviderService.DeleteAsync(variableForDeletion, CancellationToken.None);
+		}
+
+		await EvaluateAsync();
 
 		await _table!.RefreshAsync();
 	}
@@ -68,7 +91,7 @@ public partial class Home
 		await EvaluateAsync();
 	}
 
-	private async Task OnValueChangedAsync(string expression)
+	private async Task OnExpressionChangedAsync(string expression)
 	{
 		Expression = expression;
 		await EvaluateAsync();
@@ -77,7 +100,7 @@ public partial class Home
 	private async Task EvaluateAsync()
 	{
 		// Update the deep link
-		NavigationManager.NavigateTo($"?expression={Uri.EscapeDataString(Expression ?? string.Empty)}&variables={_variableDataProviderService.HttpEncodedVariables}", false);
+		NavigationManager.NavigateTo($"?expression={Uri.EscapeDataString(Expression ?? string.Empty)}&variables={_variableDataProviderService.HttpEncodedJsonVariables}", false);
 
 		try
 		{
@@ -85,7 +108,7 @@ public partial class Home
 			var variables = await _variableDataProviderService.GetDataAsync(new DataRequest<Variable>(), CancellationToken.None);
 			foreach (var variable in variables.Items)
 			{
-				expression.Parameters[variable.Name] = variable.Value;
+				expression.Parameters[variable.Name] = variable.GetValue();
 			}
 
 			var output = expression.Evaluate();
@@ -98,8 +121,6 @@ public partial class Home
 			_result = string.Empty;
 			_exceptionMessage = ex.Message;
 		}
-
-		StateHasChanged();
 	}
 
 	private static string TidyExpression(string expression)
