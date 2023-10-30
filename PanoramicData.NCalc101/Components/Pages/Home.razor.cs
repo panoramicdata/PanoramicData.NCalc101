@@ -23,6 +23,12 @@ public partial class Home
 	private readonly VariableDataProviderService _variableDataProviderService = new(default);
 	private string _exceptionMessage = string.Empty;
 
+	protected override async Task OnInitializedAsync()
+	{
+		await EvaluateAsync();
+		await base.OnInitializedAsync();
+	}
+
 	private async Task AddVariableAsync<T>()
 	{
 		var variableName = await GetUnusedVariableNameAsync();
