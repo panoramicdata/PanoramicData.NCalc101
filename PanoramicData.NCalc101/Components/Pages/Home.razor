@@ -1,16 +1,29 @@
 ﻿@page "/"
 @using PanoramicData.Blazor;
+@using PanoramicData.Blazor.Models
 @using PanoramicData.NCalc101.Models
 
 <PageTitle>NCalc 101</PageTitle>
 
 <div class="row">
 	<div class="col-12">
-		<PDTextArea @bind-Value="Expression" Keypress="OnKeyPressedAsync"/>
+		<PDTextArea Value="@Expression" ValueChanged="OnValueChangedAsync" />
 	</div>
 </div>
 <div class="row">
-	<div class="col-6">
+	<div class="col-12">
+		@if (_exceptionMessage == string.Empty)
+		{
+			<PDTextArea @bind-Value="_result" CssClass="result" IsReadOnly="true" />
+		}
+		else
+		{
+			<PDTextArea @bind-Value="_exceptionMessage" CssClass="result" IsReadOnly="true" />
+		}
+	</div>
+</div>
+<div class="row">
+	<div class="col-12">
 		<PDToolbar>
 			<PDToolbarButton Text="Add String"
 							 CssClass="btn-primary"
@@ -18,9 +31,15 @@
 			<PDToolbarButton Text="Add Integer"
 							 CssClass="btn-primary"
 							 Click="AddVariableAsync<int>" />
+			<PDToolbarButton Text="Add Double"
+							 CssClass="btn-primary"
+							 Click="AddVariableAsync<double>" />
 			<PDToolbarButton Text="Add DateTime"
 							 CssClass="btn-primary"
 							 Click="AddVariableAsync<DateTime>" />
+			<PDToolbarButton Text="Add DateTimeOffset"
+							 CssClass="btn-primary"
+							 Click="AddVariableAsync<DateTimeOffset>" />
 		</PDToolbar>
 		<PDTable
 			TItem="Variable"
@@ -28,8 +47,11 @@
 			DataProvider="_variableDataProviderService"
 			CssClass="variable-table"
 			AllowEdit="true"
+			DoubleClick="OnDoubleClickRowAsync"
 			AfterEdit="OnVariableChangedAsync"
 			UserSelectable="true"
+			KeyField="v => v.Name"
+			SelectionMode="TableSelectionMode.Single"
 		>
 			<PDColumn TItem="Variable"
 					  Id="Type"
@@ -49,15 +71,5 @@
 					  Editable="true"
 					  Field="v => v.ValueAsString" />
 		</PDTable>
-	</div>
-	<div class="col-6">
-		@if (_exceptionMessage == string.Empty)
-		{
-			<PDTextArea @bind-Value="_result" CssClass="result" IsReadOnly="true" />
-		}
-		else
-		{
-			<PDTextArea @bind-Value="_exceptionMessage" CssClass="result" IsReadOnly="true" />
-		}
 	</div>
 </div>

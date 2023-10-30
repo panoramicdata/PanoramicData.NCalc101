@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using PanoramicData.Blazor;
 using PanoramicData.Blazor.Models;
 using PanoramicData.NCalc101.Models;
@@ -22,14 +21,36 @@ public partial class Home
 
 	private async Task AddVariableAsync<T>()
 	{
+		var variableName = await GetUnusedVariableNameAsync();
+
 		await _variableDataProviderService.CreateAsync(new Variable
 		{
 			Type = typeof(T),
-			Name = "New Variable",
+			Name = variableName,
 			ValueAsString = default(T)?.ToString() ?? string.Empty
 		}, CancellationToken.None);
 
 		await _table!.RefreshAsync();
+	}
+
+	private async Task<string> GetUnusedVariableNameAsync()
+	{
+		var existingVariables = await _variableDataProviderService
+			.GetDataAsync(new DataRequest<Variable>(), CancellationToken.None);
+		var existingVariableNames = existingVariables.Items.Select(v => v.Name).ToList();
+		var variableNameChar = "abcdefghijklmnopqrstuvwxyz".FirstOrDefault(ch => !existingVariableNames.Contains(ch.ToString()));
+		if (variableNameChar == default)
+		{
+			variableNameChar = 'X';
+		}
+
+		var variableName = variableNameChar.ToString();
+		return variableName;
+	}
+
+	private async Task OnDoubleClickRowAsync()
+	{
+		await _table!.BeginEditAsync();
 	}
 
 	private async Task OnVariableChangedAsync()
@@ -37,8 +58,9 @@ public partial class Home
 		await EvaluateAsync();
 	}
 
-	private async Task OnKeyPressedAsync(KeyboardEventArgs e)
+	private async Task OnValueChangedAsync(string expression)
 	{
+		Expression = expression;
 		await EvaluateAsync();
 	}
 
@@ -49,7 +71,7 @@ public partial class Home
 
 		try
 		{
-			var expression = new ExtendedExpression(TidyExpression(Expression));
+			var expression = new ExtendedExpression(TidyExpression(Expression ?? string.Empty));
 			var variables = await _variableDataProviderService.GetDataAsync(new DataRequest<Variable>(), CancellationToken.None);
 			foreach (var variable in variables.Items)
 			{
@@ -64,6 +86,8 @@ public partial class Home
 			_result = string.Empty;
 			_exceptionMessage = ex.Message;
 		}
+
+		StateHasChanged();
 	}
 
 	private static string TidyExpression(string expression)
