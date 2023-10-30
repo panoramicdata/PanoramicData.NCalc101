@@ -15,7 +15,7 @@ namespace PanoramicData.NCalc101.Models
 			if (!string.IsNullOrWhiteSpace(httpEncodedJsonString))
 			{
 				var jsonString = HttpUtility.UrlDecode(httpEncodedJsonString);
-				_variables = JsonConvert.DeserializeObject<List<Variable>>(jsonString) ?? new();
+				_variables = JsonConvert.DeserializeObject<List<Variable>>(jsonString) ?? [];
 			}
 		}
 
