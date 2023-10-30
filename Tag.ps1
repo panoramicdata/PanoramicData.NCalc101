@@ -26,4 +26,3 @@ git push origin $versionString
 
 Write-Host("Launching Github actions page");
 Start-Process "https://github.com/panoramicdata/PanoramicData.NCalc101/actions"
-```
