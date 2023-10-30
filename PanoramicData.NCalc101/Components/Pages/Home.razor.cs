@@ -16,6 +16,7 @@ public partial class Home
 
 	private PDTable<Variable>? _table;
 	private string _result = string.Empty;
+	private string _resultType = string.Empty;
 	private readonly VariableDataProviderService _variableDataProviderService = new();
 	private string _exceptionMessage = string.Empty;
 
@@ -78,7 +79,9 @@ public partial class Home
 				expression.Parameters[variable.Name] = variable.Value;
 			}
 
-			_result = expression.Evaluate()?.ToString() ?? string.Empty;
+			var output = expression.Evaluate();
+			_result = output?.ToString() ?? string.Empty;
+			_resultType = output is null ? "null" : output.GetType().ToString();
 			_exceptionMessage = string.Empty;
 		}
 		catch (Exception ex)

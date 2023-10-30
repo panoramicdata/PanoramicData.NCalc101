@@ -7,37 +7,49 @@
 
 <div class="row">
 	<div class="col-12">
+		<h3>Input</h3>
 		<PDTextArea Value="@Expression" ValueChanged="OnValueChangedAsync" />
 	</div>
 </div>
-<div class="row">
+<div class="row mt-3">
 	<div class="col-12">
 		@if (_exceptionMessage == string.Empty)
 		{
+			<h3><i class="fa-solid fa-check-circle" /> Output (@_resultType)</h3>
 			<PDTextArea @bind-Value="_result" CssClass="result" IsReadOnly="true" />
 		}
 		else
 		{
+			<h3><i class="fa-solid fa-warning" /> Error</h3>
 			<PDTextArea @bind-Value="_exceptionMessage" CssClass="result" IsReadOnly="true" />
 		}
 	</div>
 </div>
-<div class="row">
+<div class="row mt-3">
 	<div class="col-12">
 		<PDToolbar>
-			<PDToolbarButton Text="Add String"
+			<PDToolbarButton Text="String"
+							 IconCssClass="fa-solid fa-a"
 							 CssClass="btn-primary"
 							 Click="AddVariableAsync<string>" />
-			<PDToolbarButton Text="Add Integer"
+			<PDToolbarButton Text="Integer"
 							 CssClass="btn-primary"
+							 IconCssClass="fa-solid fa-1"
 							 Click="AddVariableAsync<int>" />
-			<PDToolbarButton Text="Add Double"
+			<PDToolbarButton Text="Double"
+							 IconCssClass="fa-solid fa-temperature-half"
 							 CssClass="btn-primary"
 							 Click="AddVariableAsync<double>" />
-			<PDToolbarButton Text="Add DateTime"
+			<PDToolbarButton Text="Boolean"
+							 IconCssClass="fa-solid fa-toggle-on"
+							 CssClass="btn-primary"
+							 Click="AddVariableAsync<bool>" />
+			<PDToolbarButton Text="DateTime"
+							 IconCssClass="fa-solid fa-clock"
 							 CssClass="btn-primary"
 							 Click="AddVariableAsync<DateTime>" />
-			<PDToolbarButton Text="Add DateTimeOffset"
+			<PDToolbarButton Text="DateTimeOffset"
+							 IconCssClass="fa-regular fa-clock"
 							 CssClass="btn-primary"
 							 Click="AddVariableAsync<DateTimeOffset>" />
 		</PDToolbar>
@@ -57,6 +69,7 @@
 					  Id="Type"
 					  Title="Type">
 				<Template>
+					<i class="@context.FontAwesome" />
 					@context.Type.ToString()
 				</Template>
 			</PDColumn>
