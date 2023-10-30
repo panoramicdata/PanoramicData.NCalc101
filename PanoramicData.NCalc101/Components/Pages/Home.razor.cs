@@ -12,12 +12,15 @@ public partial class Home
 	public NavigationManager NavigationManager { get; set; } = null!;
 
 	[SupplyParameterFromQuery(Name = "expression")]
-	private string Expression { get; set; } = "1 + 2";
+	private string? Expression { get; set; }
+
+	[SupplyParameterFromQuery(Name = "variables")]
+	private string? HttpEncodedJsonVariables { get; set; }
 
 	private PDTable<Variable>? _table;
 	private string _result = string.Empty;
 	private string _resultType = string.Empty;
-	private readonly VariableDataProviderService _variableDataProviderService = new();
+	private readonly VariableDataProviderService _variableDataProviderService = new(default);
 	private string _exceptionMessage = string.Empty;
 
 	private async Task AddVariableAsync<T>()
@@ -68,7 +71,7 @@ public partial class Home
 	private async Task EvaluateAsync()
 	{
 		// Update the deep link
-		NavigationManager.NavigateTo($"?expression={Uri.EscapeDataString(Expression ?? string.Empty)}", false);
+		NavigationManager.NavigateTo($"?expression={Uri.EscapeDataString(Expression ?? string.Empty)}&variables={_variableDataProviderService.HttpEncodedVariables}", false);
 
 		try
 		{

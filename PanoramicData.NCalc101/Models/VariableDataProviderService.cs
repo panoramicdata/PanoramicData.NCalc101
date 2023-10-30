@@ -1,11 +1,28 @@
-﻿using PanoramicData.Blazor.Interfaces;
+﻿using Newtonsoft.Json;
+using PanoramicData.Blazor.Interfaces;
 using PanoramicData.Blazor.Models;
+using System.Web;
 
 namespace PanoramicData.NCalc101.Models
 {
 	public class VariableDataProviderService : IDataProviderService<Variable>
 	{
 		private readonly List<Variable> _variables = [];
+
+		public VariableDataProviderService(string? httpEncodedJsonString)
+		{
+			// If we have a JSON string, then decode it and use it to populate _variables.
+			if (!string.IsNullOrWhiteSpace(httpEncodedJsonString))
+			{
+				var jsonString = HttpUtility.UrlDecode(httpEncodedJsonString);
+				_variables = JsonConvert.DeserializeObject<List<Variable>>(jsonString) ?? new();
+			}
+		}
+
+		/// <summary>
+		/// The contents of _variables as an HTTP-encoded JSON string.
+		/// </summary>
+		public string HttpEncodedVariables => HttpUtility.UrlEncode(JsonConvert.SerializeObject(_variables));
 
 		public Task<OperationResponse> CreateAsync(Variable item, CancellationToken cancellationToken)
 		{
