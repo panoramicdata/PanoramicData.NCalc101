@@ -27,7 +27,7 @@ jobs:
 
             # Publishes Blazor project to the release-folder
             - name: Publish .NET Core Project
-              run: dotnet publish NeaProject/NeaProject.csproj -c Release -o release --nologo
+              run: dotnet publish PanoramicData.NCalc101/PanoramicData.NCalc101.csproj -c Release -o release --nologo
 
             # Copy index.html to 404.html to serve the same file when a file is not found
             - name: copy index.html to 404.html
