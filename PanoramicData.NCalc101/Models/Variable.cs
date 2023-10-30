@@ -32,7 +32,7 @@ public class Variable
 
 	public string FontAwesome => Type switch
 	{
-		Type t when t == typeof(bool) => "fa-solid fa-ban",
+		Type t when t == typeof(bool) => "fa-solid fa-toggle-on",
 		Type t when t == typeof(byte) => "fa-solid fa-ban",
 		Type t when t == typeof(char) => "fa-solid fa-ban",
 		Type t when t == typeof(DateTime) => "fa-solid fa-clock",
