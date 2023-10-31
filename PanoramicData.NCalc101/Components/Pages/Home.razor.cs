@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Newtonsoft.Json;
 using PanoramicData.Blazor;
 using PanoramicData.Blazor.Models;
 using PanoramicData.NCalc101.Interfaces;
@@ -109,7 +110,7 @@ public partial class Home
 	private async Task EvaluateAsync()
 	{
 		// Update the deep link
-		NavigationManager.NavigateTo($"?expression={Uri.EscapeDataString(Expression ?? string.Empty)}&variables={_variableDataProviderService.HttpEncodedJsonVariables}", false);
+		NavigationManager.NavigateTo($"?expression={Uri.EscapeDataString(Expression ?? string.Empty)}&variables={Uri.EscapeDataString(JsonConvert.SerializeObject(_variableDataProviderService.Variables))}", false);
 
 		try
 		{

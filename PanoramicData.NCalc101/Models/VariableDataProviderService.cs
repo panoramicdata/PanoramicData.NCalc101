@@ -9,6 +9,8 @@ public class VariableDataProviderService : IDataProviderService<Variable>
 {
 	private readonly List<Variable> _variables = [];
 
+	public IReadOnlyList<Variable> Variables => _variables.AsReadOnly();
+
 	public VariableDataProviderService(string? httpEncodedJsonString)
 	{
 		// If we have a JSON string, then decode it and use it to populate _variables.
@@ -18,11 +20,6 @@ public class VariableDataProviderService : IDataProviderService<Variable>
 			_variables = (JsonConvert.DeserializeObject<List<Variable>>(jsonString) ?? []);
 		}
 	}
-
-	/// <summary>
-	/// The contents of _variables as an HTTP-encoded JSON string.
-	/// </summary>
-	public string HttpEncodedJsonVariables => HttpUtility.UrlEncode(JsonConvert.SerializeObject(_variables));
 
 	public Task<OperationResponse> CreateAsync(Variable item, CancellationToken cancellationToken)
 	{
