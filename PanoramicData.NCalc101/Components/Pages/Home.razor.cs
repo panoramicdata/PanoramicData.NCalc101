@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using PanoramicData.Blazor;
 using PanoramicData.Blazor.Models;
+using PanoramicData.NCalc101.Interfaces;
 using PanoramicData.NCalc101.Models;
 using PanoramicData.NCalcExtensions;
 
@@ -10,6 +11,9 @@ public partial class Home
 {
 	[Inject]
 	public NavigationManager NavigationManager { get; set; } = null!;
+
+	[Inject]
+	public IToastService ToastService { get; set; } = null!;
 
 	[SupplyParameterFromQuery(Name = "expression")]
 	private string? Expression { get; set; }
@@ -89,6 +93,11 @@ public partial class Home
 	private async Task OnVariableChangedAsync()
 	{
 		await EvaluateAsync();
+	}
+
+	private void TableExceptionHandler(Exception e)
+	{
+		ToastService.Error(e.Message, "Table Exception");
 	}
 
 	private async Task OnExpressionChangedAsync(string expression)

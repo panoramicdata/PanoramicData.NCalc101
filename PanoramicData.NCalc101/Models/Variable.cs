@@ -7,7 +7,7 @@ public class Variable(string name, string type, object? @object)
 
 	public string Type { get; } = type;
 
-	public string Name { get; } = name;
+	public string Name { get; set; } = name;
 
 	public string Value { get; set; } = @object?.ToString() ?? string.Empty;
 

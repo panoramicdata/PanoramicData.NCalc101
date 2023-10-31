@@ -13,9 +13,10 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="PanoramicData.Blazor" Version="3.1.72" />
+		<PackageReference Include="PanoramicData.Blazor" Version="3.1.73" />
 		<PackageReference Include="PanoramicData.NCalcExtensions" Version="1.20.127" />
 		<PackageReference Include="popper.js" Version="1.16.1" />
+		<PackageReference Include="Sotsera.Blazor.Toaster" Version="3.0.0" />
 	</ItemGroup>
 
 </Project>

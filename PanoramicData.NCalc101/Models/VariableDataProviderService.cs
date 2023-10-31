@@ -26,13 +26,13 @@ public class VariableDataProviderService : IDataProviderService<Variable>
 
 	public Task<OperationResponse> CreateAsync(Variable item, CancellationToken cancellationToken)
 	{
-		var existing = _variables.FirstOrDefault(v => v.Name == item.Name);
+		var existing = _variables.FirstOrDefault(v => v.Id == item.Id);
 		if (existing != null)
 		{
 			return Task.FromResult(new OperationResponse
 			{
 				Success = false,
-				ErrorMessage = $"Variable with name '{item.Name}' already exists."
+				ErrorMessage = $"Variable with id '{item.Id}' already exists."
 			});
 		}
 
@@ -46,13 +46,13 @@ public class VariableDataProviderService : IDataProviderService<Variable>
 
 	public Task<OperationResponse> DeleteAsync(Variable item, CancellationToken cancellationToken)
 	{
-		var existing = _variables.FirstOrDefault(v => v.Name == item.Name);
+		var existing = _variables.FirstOrDefault(v => v.Id == item.Id);
 		if (existing is null)
 		{
 			return Task.FromResult(new OperationResponse
 			{
 				Success = false,
-				ErrorMessage = $"Variable with name '{item.Name}' does not exist."
+				ErrorMessage = $"Variable with id '{item.Id}' does not exist."
 			});
 		}
 
@@ -72,21 +72,28 @@ public class VariableDataProviderService : IDataProviderService<Variable>
 
 	public Task<OperationResponse> UpdateAsync(Variable item, IDictionary<string, object?> delta, CancellationToken cancellationToken)
 	{
-		var existing = _variables.FirstOrDefault(v => v.Name == item.Name);
-		if (existing is null)
+		try
 		{
+			var existing = _variables.FirstOrDefault(v => v.Id == item.Id);
+			if (existing is null)
+			{
+				return Task.FromResult(new OperationResponse
+				{
+					Success = false,
+					ErrorMessage = $"Variable with id '{item.Id}' does not exist."
+				});
+			}
+
+			existing.Value = item.Value;
+
 			return Task.FromResult(new OperationResponse
 			{
-				Success = false,
-				ErrorMessage = $"Variable with name '{item.Name}' does not exist."
+				Success = true
 			});
 		}
-
-		existing.Value = item.Value;
-
-		return Task.FromResult(new OperationResponse
+		catch (Exception e)
 		{
-			Success = true
-		});
+			throw;
+		}
 	}
 }

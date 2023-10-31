@@ -53,7 +53,7 @@
 							 IconCssClass="fa-regular fa-clock"
 							 CssClass="btn-primary"
 							 Click="AddVariableAsync<DateTimeOffset>" />
-			<PDToolbarButton Text="Delete Variable"
+			<PDToolbarButton Text="Delete Variable(s)"
 							 IsEnabled="@(_table!.Selection is not null)"
 							 IconCssClass="fa-regular fa-trash"
 							 CssClass="btn-secondary"
@@ -65,11 +65,12 @@
 			DataProvider="_variableDataProviderService"
 			CssClass="variable-table"
 			AllowEdit="true"
+			AfterEditCommitted="OnVariableChangedAsync"
 			DoubleClick="OnDoubleClickRowAsync"
-			AfterEdit="OnVariableChangedAsync"
 			UserSelectable="true"
 			KeyField="v => v.Id"
 			SelectionMode="TableSelectionMode.Multiple"
+			ExceptionHandler="TableExceptionHandler"
 		>
 			<PDColumn TItem="Variable"
 					  Id="Type"
