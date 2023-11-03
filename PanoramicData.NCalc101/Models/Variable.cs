@@ -1,15 +1,16 @@
-﻿namespace PanoramicData.NCalc101.Models;
+﻿using PanoramicData.NCalcExtensions;
 
-public class Variable(string name, string type, object? @object)
+namespace PanoramicData.NCalc101.Models;
+
+public class Variable
 {
-	[field: NonSerialized]
-	public Guid Id { get; } = Guid.NewGuid();
+	public string Id { get; set; } = Guid.NewGuid().ToString();
 
-	public string Type { get; } = type;
+	public string Type { get; set; } = string.Empty;
 
-	public string Name { get; set; } = name;
+	public string Name { get; set; } = string.Empty;
 
-	public string Value { get; set; } = @object?.ToString() ?? string.Empty;
+	public string Value { get; set; } = string.Empty;
 
 	internal object? GetValue() => Type switch
 	{
@@ -25,6 +26,7 @@ public class Variable(string name, string type, object? @object)
 		"System.Int64" => long.Parse(Value),
 		"System.SByte" => sbyte.Parse(Value),
 		"System.Int16" => short.Parse(Value),
+		"PanoramicData.NCalcExtensions.ExtendedExpression" => new ExtendedExpression(Value),
 		"System.String" => Value,
 		"null" => null,
 		_ => throw new InvalidOperationException($"Unsupported type: {Type}"),
@@ -38,6 +40,7 @@ public class Variable(string name, string type, object? @object)
 		"System.Double" => "fa-solid fa-temperature-half",
 		"System.Int32" => "fa-solid fa-1",
 		"System.String" => "fa-solid fa-a",
+		"PanoramicData.NCalcExtensions.ExtendedExpression" => "fa-solid fa-calculator",
 		_ => "fa-solid fa-ban",
 	};
 }

@@ -1,5 +1,6 @@
 ﻿@page "/examples"
 @using PanoramicData.NCalc101.Examples
+@using PanoramicData.Blazor
 
 <PageTitle>NCalc 101</PageTitle>
 <h1>Introduction</h1>
@@ -13,22 +14,22 @@
 <p>
 	<ul>
 	@foreach(var example in Example.Examples)
-		{
-			<li><a href="examples#@example.GetId()" target="_top">@example.Name</a></li>
-		}
+{
+	<li><a href="examples#@example.GetId()" target="_top">@example.Name</a></li>
+}
 	</ul>
 </p>
 <h1>Examples</h1>
 <hr />
 @foreach(var example in Example.Examples)
 {
-	<h3 id="@example.GetId()">@example.Name (<a href="@example.Uri">Try it out!</a>)</h3>
+	<h3 id="@example.GetId()">@example.Name <PDButton CssClass="btn btn-primary" Click="() => CreateExampleWorkspaceAsync(example)">Try it out!</PDButton></h3>
 	<h4><i class="fa-solid fa-keyboard"></i> Expression</h4>
 	<pre>@example.Expression</pre>
 	@if(example.Variables.Count > 0)
-	{
-		<h4><i class="fa-solid fa-list"></i> Variables</h4>
-		<table class="table table-striped table-bordered table-hover">
+{
+	<h4><i class="fa-solid fa-list"></i> Variables</h4>
+	<table class="table table-striped table-bordered table-hover">
 			<thead>
 				<tr>
 					<th>Type</th>
@@ -38,16 +39,16 @@
 			</thead>
 			<tbody>
 				@foreach(var variable in example.Variables)
-				{
-					<tr>
+{
+	<tr>
 						<td><i class="@variable.GetFontAwesome()"></i> @variable.Type</td>
 						<td>@variable.Name</td>
 						<td>@variable.Value</td>
 					</tr>
-				}
+}
 			</tbody>
 		</table>
-	}
+}
 	<h4><i class="fa-solid fa-check-circle"></i> Output (@example.GetEvaluationType())</h4>
 	<pre>@example.GetEvaluationString()</pre>
 	<h4><i class="fa-solid fa-info-circle"></i> Explanation</h4>

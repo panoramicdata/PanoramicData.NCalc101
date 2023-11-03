@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using PanoramicData.Blazor.Interfaces;
@@ -17,13 +18,16 @@ builder.Services
 	.AddScoped<IBlockOverlayService, BlockOverlayService>()
 	.AddScoped<IGlobalEventService, GlobalEventService>()
 	.AddScoped<IToastService, ToastService>()
+	.AddScoped<IWorkspaceService, WorkspaceService>()
+	.AddScoped<ILogger, ToastLoggerService>()
 	.AddToaster(config =>
 	{
 		config.PositionClass = Defaults.Classes.Position.BottomRight;
 		config.PreventDuplicates = false;
 		config.ShowTransitionDuration = 500;
 		config.HideTransitionDuration = 500;
-	});
+	})
+	.AddBlazoredLocalStorage();
 ;
 
 await builder.Build().RunAsync();

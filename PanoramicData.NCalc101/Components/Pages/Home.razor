@@ -4,65 +4,69 @@
 @using PanoramicData.NCalc101.Models
 
 <PageTitle>NCalc 101</PageTitle>
-
 <div class="row">
 	<div class="col-12">
-		<h3><i class="fa-solid fa-keyboard" /> Input</h3>
-		<PDTextArea Value="@Expression" ValueChanged="OnExpressionChangedAsync" />
+		<PDToolbar>
+			<PDToolbarTextbox Value="@WorkspaceService.Workspace.Name"
+							  ValueChanged="NameChangedAsync"
+							  Label="Workspace"
+							  ShowClearButton="false"
+							  />
+			<PDToolbarDropdown Text="Add Variable"
+							   IconCssClass="fa fa-plus"
+							   CssClass="btn btn-success"
+							   IsEnabled="true"
+							   Click="@(async x => await AddVariableAsync(x))"
+							   Items="_addVariableMenuItems">
+
+			</PDToolbarDropdown>
+
+			<PDToolbarButton Text="Delete Variable(s)"
+							 IsEnabled="@(_table!.Selection is not null)"
+							 IconCssClass="fa-solid fa-trash"
+							 CssClass="btn btn-danger"
+							 Click="DeleteRowAsync" />
+
+			<PDToolbarButton Text="Create Workspace"
+							 IconCssClass="fa-solid fa-plus"
+							 CssClass="btn btn-success"
+							 ShiftRight="true"
+							 Click="CreateWorkspaceAsync" />
+
+			<PDToolbarButton Text="Delete Workspace"
+							 IsEnabled="@(WorkspaceService.Workspace.Name != "default")"
+							 IconCssClass="fa-solid fa-trash"
+							 CssClass="btn btn-danger"
+							 ShiftRight="true"
+							 Click="DeleteWorkspaceAsync" />
+		</PDToolbar>
 	</div>
 </div>
-<div class="row mt-3">
-	<div class="col-12">
+<div class="row">
+	<div class="col-lg-6">
+		<h3><i class="fa-solid fa-keyboard" /> Input</h3>
+		<PDTextArea Value="@WorkspaceService.Workspace.Expression" Rows="10" ValueChanged="OnExpressionChangedAsync" />
+	</div>
+	<div class="col-lg-6">
 		@if (_exceptionMessage == string.Empty)
-	{
+{
 		<h3><i class="fa-solid fa-check-circle" /> Output (@_resultType)</h3>
-		<PDTextArea @bind-Value="_result" CssClass="result" IsReadOnly="true" />
-	}
-	else
-	{
+		<PDTextArea @bind-Value="_result" Rows="10" CssClass="result" IsReadOnly="true" />
+}
+else
+{
 		<h3><i class="fa-solid fa-warning" /> Error</h3>
 		<PDTextArea @bind-Value="_exceptionMessage" CssClass="result" IsReadOnly="true" />
-	}
+}
 	</div>
 </div>
 <div class="row mt-3">
 	<div class="col-12">
 		<h3><i class="fa-solid fa-list" /> Variables</h3>
-		<PDToolbar>
-			<PDToolbarButton Text="String"
-							 IconCssClass="fa-solid fa-a"
-							 CssClass="btn-primary"
-							 Click="AddVariableAsync<string>" />
-			<PDToolbarButton Text="Integer"
-							 CssClass="btn-primary"
-							 IconCssClass="fa-solid fa-1"
-							 Click="AddVariableAsync<int>" />
-			<PDToolbarButton Text="Double"
-							 IconCssClass="fa-solid fa-temperature-half"
-							 CssClass="btn-primary"
-							 Click="AddVariableAsync<double>" />
-			<PDToolbarButton Text="Boolean"
-							 IconCssClass="fa-solid fa-toggle-on"
-							 CssClass="btn-primary"
-							 Click="AddVariableAsync<bool>" />
-			<PDToolbarButton Text="DateTime"
-							 IconCssClass="fa-solid fa-clock"
-							 CssClass="btn-primary"
-							 Click="AddVariableAsync<DateTime>" />
-			<PDToolbarButton Text="DateTimeOffset"
-							 IconCssClass="fa-regular fa-clock"
-							 CssClass="btn-primary"
-							 Click="AddVariableAsync<DateTimeOffset>" />
-			<PDToolbarButton Text="Delete Variable(s)"
-							 IsEnabled="@(_table!.Selection is not null)"
-							 IconCssClass="fa-regular fa-trash"
-							 CssClass="btn-secondary"
-							 Click="DeleteRowAsync" />
-		</PDToolbar>
 		<PDTable
 			TItem="Variable"
 			@ref = "_table"
-			DataProvider="_variableDataProviderService"
+			DataProvider="WorkspaceService"
 			CssClass="variable-table"
 			AllowEdit="true"
 			AfterEditCommitted="OnVariableChangedAsync"

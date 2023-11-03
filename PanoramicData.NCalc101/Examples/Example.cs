@@ -84,7 +84,12 @@ public record Example
 			Expression = "message",
 			Explanation = "The response is returned from a variable called 'message' containing the string 'Hello World'.",
 			Variables = [
-				new("message", "System.String", "Hello World")
+				new()
+				{
+					Name = "message",
+					Type = "System.String",
+					Value = "Hello World"
+				}
 			]
 		},
 		new()
@@ -93,8 +98,18 @@ public record Example
 			Expression = "itemAtIndex(list('Heaven', 'Hell', 'Purgatory'), 1) + a + substring(b, 2, 3) + 'l' + first(list('a', 'b', 'c', 'd'), 'x', 'x > \\'c\\'')",
 			Explanation = "The response is returned by string concatenating different functions using the '+' operator.",
 			Variables = [
-				new("a", "System.String", "o "),
-				new("b", "System.String", "xJWorYvVs"),
+				new()
+				{
+					Name = "a",
+					Type = "System.String",
+					Value = "o "
+				},
+				new()
+				{
+					Name = "b",
+					Type = "System.String",
+					Value = "xJWorYvVs"
+				},
 			]
 		},
 		new()

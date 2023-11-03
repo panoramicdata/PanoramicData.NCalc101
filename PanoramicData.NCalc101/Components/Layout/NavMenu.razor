@@ -13,14 +13,23 @@
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill" aria-hidden="true"></span> Home
+                <span class="fa-solid fa-fw fa-home" aria-hidden="true"></span> Home
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="examples">
-                <span class="bi bi-list-nested" aria-hidden="true"></span> Examples
+                <span class="fa-solid fa-fw fa-list" aria-hidden="true"></span> Examples
             </NavLink>
         </div>
+        <hr />
+        @foreach(var workspaceName in _workspaceNames.OrderBy(n => n))
+        {
+        <div class="nav-item px-3">
+                <NavLink class="nav-link" @onclick="() => ClickAsync(workspaceName)">
+                <i class="fa-solid fa-fw fa-file-text"></i> @workspaceName.Substring(0, Math.Min(@workspaceName.Length, 15))
+            </NavLink>
+        </div>
+        }
     </nav>
 </div>
 

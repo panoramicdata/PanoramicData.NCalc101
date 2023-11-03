@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Newtonsoft.Json;
 using PanoramicData.Blazor;
 using PanoramicData.Blazor.Models;
 using PanoramicData.NCalc101.Interfaces;
@@ -16,34 +15,115 @@ public partial class Home
 	[Inject]
 	public IToastService ToastService { get; set; } = null!;
 
-	[SupplyParameterFromQuery(Name = "expression")]
-	private string? Expression { get; set; }
+	[Inject]
+	public IWorkspaceService WorkspaceService { get; set; } = null!;
 
-	[SupplyParameterFromQuery(Name = "variables")]
-	private string? HttpEncodedJsonVariables { get; set; }
+	[SupplyParameterFromQuery(Name = "workspace")]
+	private string? WorkspaceName { get; set; }
+
+	private readonly string AlphabetLowerCase = new(Enumerable.Range(97, 26).Select(n => (char)n).ToArray());
 
 	private PDTable<Variable>? _table;
 	private string _result = string.Empty;
 	private string _resultType = string.Empty;
-	private VariableDataProviderService _variableDataProviderService = new(default);
 	private string _exceptionMessage = string.Empty;
+	private readonly List<MenuItem> _addVariableMenuItems = [
+		new MenuItem { Text = "&&String", IconCssClass = "fa-solid fa-a" },
+		new MenuItem { Text = "&&Integer", IconCssClass = "fa-solid fa-1" },
+		new MenuItem { Text = "&&Double", IconCssClass = "fa-solid fa-temperature-half" },
+		new MenuItem { Text = "&&Boolean", IconCssClass = "fa-solid fa-toggle-on" },
+		new MenuItem { Text = "D&&ateTime", IconCssClass = "fa-solid fa-clock" },
+		new MenuItem { Text = "D&&ateTimeOffset", IconCssClass = "fa-solid fa-clock" },
+		new MenuItem { Text = "&&Expression", IconCssClass = "fa-solid fa-calculator" },
+	];
 
 	protected override async Task OnInitializedAsync()
 	{
-		if (!string.IsNullOrWhiteSpace(HttpEncodedJsonVariables))
+		if (string.IsNullOrWhiteSpace(WorkspaceName))
 		{
-			_variableDataProviderService = new(HttpEncodedJsonVariables);
+			WorkspaceName = (await WorkspaceService.LastSelectedAsync(default)) ?? "default";
+
+			// Update the deep link
+			NavigationManager.NavigateTo($"?workspace={WorkspaceService.Workspace.Name}", false);
 		}
 
+		await WorkspaceService.SelectAsync(WorkspaceName, default);
+
+		await _table!.RefreshAsync();
+
 		await EvaluateAsync();
+
 		await base.OnInitializedAsync();
+	}
+
+	private async Task NameChangedAsync(string newName)
+	{
+		await WorkspaceService.RenameAsync(newName, default);
+		NavigationManager.NavigateTo($"?workspace={WorkspaceService.Workspace.Name}", true);
+	}
+
+	private async Task AddVariableAsync(string value)
+	{
+		switch (value)
+		{
+			case "String":
+				await AddVariableAsync<string>();
+				break;
+			case "Integer":
+				await AddVariableAsync<int>();
+				break;
+			case "Double":
+				await AddVariableAsync<double>();
+				break;
+			case "DateTime":
+				await AddVariableAsync<DateTime>();
+				break;
+			case "DateTimeOffset":
+				await AddVariableAsync<DateTimeOffset>();
+				break;
+			case "Boolean":
+				await AddVariableAsync<bool>();
+				break;
+			case "TimeSpan":
+				await AddVariableAsync<TimeSpan>();
+				break;
+			case "Guid":
+				await AddVariableAsync<Guid>();
+				break;
+			case "null":
+				await AddVariableAsync<object?>();
+				break;
+			case "Expression":
+				await AddVariableAsync<ExtendedExpression>();
+				break;
+			default:
+				throw new InvalidOperationException($"Unsupported type: {value}");
+		}
 	}
 
 	private async Task AddVariableAsync<T>()
 	{
 		var variableName = await GetUnusedVariableNameAsync();
-		await _variableDataProviderService.CreateAsync(new Variable(variableName, typeof(T).ToString(), default(T)), CancellationToken.None);
+		await WorkspaceService!.CreateAsync(new Variable
+		{
+			Name = variableName,
+			Type = typeof(T).ToString(),
+			Value = string.Empty
+		}, CancellationToken.None);
 		await _table!.RefreshAsync();
+	}
+
+	private async Task DeleteWorkspaceAsync()
+	{
+		await WorkspaceService!.DeleteAsync(WorkspaceService.Workspace.Name, default);
+		NavigationManager.NavigateTo("/", true);
+	}
+
+	private async Task CreateWorkspaceAsync()
+	{
+		var newName = Guid.NewGuid().ToString();
+		await WorkspaceService!.CreateWorkspaceAsync(newName, "1 + 1", [], default);
+		NavigationManager.NavigateTo($"/?workspace={newName}", false);
 	}
 
 	private async Task DeleteRowAsync()
@@ -54,7 +134,7 @@ public partial class Home
 			return;
 		}
 
-		var existingVariables = await _variableDataProviderService
+		var existingVariables = await WorkspaceService!
 			.GetDataAsync(new DataRequest<Variable>(), CancellationToken.None);
 		var existingVariablesForDeletion = existingVariables
 			.Items
@@ -63,7 +143,7 @@ public partial class Home
 
 		foreach (var variableForDeletion in existingVariablesForDeletion)
 		{
-			await _variableDataProviderService.DeleteAsync(variableForDeletion, CancellationToken.None);
+			await WorkspaceService!.DeleteAsync(variableForDeletion, CancellationToken.None);
 		}
 
 		await EvaluateAsync();
@@ -73,10 +153,10 @@ public partial class Home
 
 	private async Task<string> GetUnusedVariableNameAsync()
 	{
-		var existingVariables = await _variableDataProviderService
+		var existingVariables = await WorkspaceService!
 			.GetDataAsync(new DataRequest<Variable>(), CancellationToken.None);
 		var existingVariableNames = existingVariables.Items.Select(v => v.Name).ToList();
-		var variableNameChar = "abcdefghijklmnopqrstuvwxyz".FirstOrDefault(ch => !existingVariableNames.Contains(ch.ToString()));
+		var variableNameChar = AlphabetLowerCase.FirstOrDefault(ch => !existingVariableNames.Contains(ch.ToString()));
 		if (variableNameChar == default)
 		{
 			variableNameChar = 'X';
@@ -103,19 +183,16 @@ public partial class Home
 
 	private async Task OnExpressionChangedAsync(string expression)
 	{
-		Expression = expression;
+		await WorkspaceService.SetExpressionAsync(expression, default);
 		await EvaluateAsync();
 	}
 
 	private async Task EvaluateAsync()
 	{
-		// Update the deep link
-		NavigationManager.NavigateTo($"?expression={Uri.EscapeDataString(Expression ?? string.Empty)}&variables={Uri.EscapeDataString(JsonConvert.SerializeObject(_variableDataProviderService.Variables))}", false);
-
 		try
 		{
-			var expression = new ExtendedExpression(TidyExpression(Expression ?? string.Empty));
-			var variables = await _variableDataProviderService.GetDataAsync(new DataRequest<Variable>(), CancellationToken.None);
+			var expression = new ExtendedExpression(TidyExpression(WorkspaceService.Workspace.Expression ?? string.Empty));
+			var variables = await WorkspaceService!.GetDataAsync(new DataRequest<Variable>(), CancellationToken.None);
 			foreach (var variable in variables.Items)
 			{
 				expression.Parameters[variable.Name] = variable.GetValue();
