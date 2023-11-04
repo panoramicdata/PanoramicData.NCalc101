@@ -23,21 +23,21 @@
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="about">
-                <i class="fa-solid fa-fw fa-question-circle" aria-hidden="true"></i>&nbsp;About
+                <i class="fa-solid fa-fw fa-info-circle" aria-hidden="true"></i>&nbsp;About
             </NavLink>
         </div>
         <hr />
         <ul class="nav-item px-3">
             <li class="px-0">
                 <NavLink class="nav-link">
-                    <i class="fa-solid fa-fw fa-question-circle" aria-hidden="true"></i>&nbsp;Workspaces
+                    <i class="fa-solid fa-fw fa-folder" aria-hidden="true"></i>&nbsp;Workspaces
                 </NavLink>
                 <ul>
                 @foreach (var workspaceName in _workspaceNames.OrderBy(n => n))
                 {
-                    <li class="nav-item px-0">
+                        <li class="nav-item px-0" style="list-style-type: none;">
                         <NavLink class="nav-link" @onclick="() => ClickAsync(workspaceName)">
-                            <i class="fa-solid fa-fw fa-file-text"></i> @workspaceName.Substring(0, Math.Min(@workspaceName.Length, 15))
+                                <i class="fa-solid fa-fw fa-desktop"></i>&nbsp;@workspaceName.Substring(0, Math.Min(@workspaceName.Length, 15))
                         </NavLink>
                     </li>
                 }
