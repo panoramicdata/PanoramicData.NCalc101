@@ -9,31 +9,65 @@
 		<PDToolbar>
 			<PDToolbarTextbox Value="@WorkspaceService.Workspace.Name"
 							  ValueChanged="NameChangedAsync"
+							  Width="100%"
 							  Label="Workspace"
 							  ShowClearButton="false"
 							  />
-			<PDToolbarDropdown Text="Add Variable"
+		</PDToolbar>
+	</div>
+</div>
+<div class="row">
+	<div class="col-12 d-none d-lg-block">
+		<PDToolbar>
+			<PDToolbarDropdown Text=" Add Variable"
 							   IconCssClass="fa fa-plus"
 							   CssClass="btn btn-success"
 							   IsEnabled="true"
 							   Click="@(async x => await AddVariableAsync(x))"
-							   Items="_addVariableMenuItems">
+							   Items="_addVariableMenuItems" />
 
-			</PDToolbarDropdown>
-
-			<PDToolbarButton Text="Delete Variable(s)"
+			<PDToolbarButton Text=" Delete Variable(s)"
 							 IsEnabled="@(_table!.Selection is not null)"
 							 IconCssClass="fa-solid fa-trash"
 							 CssClass="btn btn-danger"
 							 Click="DeleteRowAsync" />
 
-			<PDToolbarButton Text="Create Workspace"
+			<PDToolbarButton Text="Add Workspace"
 							 IconCssClass="fa-solid fa-plus"
 							 CssClass="btn btn-success"
 							 ShiftRight="true"
 							 Click="CreateWorkspaceAsync" />
 
 			<PDToolbarButton Text="Delete Workspace"
+							 IsEnabled="@(WorkspaceService.Workspace.Name != "default")"
+							 IconCssClass="fa-solid fa-trash"
+							 ShiftRight="true"
+							 CssClass="btn btn-danger"
+							 Click="DeleteWorkspaceAsync" />
+		</PDToolbar>
+	</div>
+	<div class="col-12 d-block d-lg-none">
+		<PDToolbar>
+			<PDToolbarDropdown Text=" Var"
+							   IconCssClass="fa fa-plus"
+							   CssClass="btn btn-success"
+							   IsEnabled="true"
+							   Click="@(async x => await AddVariableAsync(x))"
+							   Items="_addVariableMenuItems" />
+
+			<PDToolbarButton Text="Var"
+							 IsEnabled="@(_table!.Selection is not null)"
+							 IconCssClass="fa-solid fa-trash"
+							 CssClass="btn btn-danger"
+							 Click="DeleteRowAsync" />
+
+			<PDToolbarButton Text=" WS"
+							 IconCssClass="fa-solid fa-plus"
+							 CssClass="btn btn-success"
+							 ShiftRight="true"
+							 Click="CreateWorkspaceAsync" />
+
+			<PDToolbarButton Text=" WS"
 							 IsEnabled="@(WorkspaceService.Workspace.Name != "default")"
 							 IconCssClass="fa-solid fa-trash"
 							 CssClass="btn btn-danger"
@@ -43,21 +77,35 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-lg-6">
+	<div class="col-lg-6 mt-3">
 		<h3><i class="fa-solid fa-keyboard" /> Input</h3>
-		<PDTextArea Value="@WorkspaceService.Workspace.Expression" Rows="10" ValueChanged="OnExpressionChangedAsync" />
+		<PDTextArea Value="@WorkspaceService.Workspace.Expression"
+					Rows="10"
+					CssClass="d-none d-lg-block"
+					ValueChanged="OnExpressionChangedAsync" />
+		<PDTextArea Value="@WorkspaceService.Workspace.Expression"
+					Rows="5"
+					CssClass="d-block d-lg-none"
+					ValueChanged="OnExpressionChangedAsync" />
 	</div>
-	<div class="col-lg-6">
+	<div class="col-lg-6 mt-3">
 		@if (_exceptionMessage == string.Empty)
-{
-		<h3><i class="fa-solid fa-check-circle" /> Output (@_resultType)</h3>
-		<PDTextArea @bind-Value="_result" Rows="10" CssClass="result" IsReadOnly="true" />
-}
-else
-{
-		<h3><i class="fa-solid fa-warning" /> Error</h3>
-		<PDTextArea @bind-Value="_exceptionMessage" CssClass="result" IsReadOnly="true" />
-}
+		{
+			<h3><i class="fa-solid fa-check-circle" /> Output (@_resultType)</h3>
+			<PDTextArea @bind-Value="_result"
+						Rows="10"
+						CssClass="result d-none d-lg-block"
+						IsReadOnly="true" />
+			<PDTextArea @bind-Value="_result"
+						Rows="5"
+						CssClass="result d-block d-lg-none"
+						IsReadOnly="true" />
+		}
+		else
+		{
+			<h3><i class="fa-solid fa-warning mt-3" /> Error</h3>
+			<PDTextArea @bind-Value="_exceptionMessage" CssClass="result" IsReadOnly="true" />
+		}
 	</div>
 </div>
 <div class="row mt-3">
@@ -81,7 +129,7 @@ else
 					  Title="Type">
 				<Template>
 					<i class="@context.GetFontAwesome()" />
-					@context.Type.ToString()
+					@(new MarkupString(context.Type.ToString().Replace(".", "<wbr />.")))
 				</Template>
 			</PDColumn>
 			<PDColumn TItem="Variable"
