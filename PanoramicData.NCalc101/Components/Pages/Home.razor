@@ -14,19 +14,30 @@
 							  ShowClearButton="false"
 							  />
 
-			<PDToolbarButton Text=" Add Workspace"
+			<PDToolbarButton Text=" Add"
 							 IconCssClass="fa-solid fa-plus"
 							 CssClass="btn btn-success"
 							 ShiftRight="true"
 							 Click="CreateWorkspaceAsync" />
 
-			<PDToolbarButton Text=" Export Workspace"
+			<PDToolbarButton Text=" Export"
 							 IconCssClass="fa-solid fa-download"
 							 CssClass="btn btn-info"
 							 ShiftRight="true"
-							 Click="DownloadWorkspaceAsync" />
+							 Click="ExportWorkspaceAsync" />
 
-			<PDToolbarButton Text=" Delete Workspace"
+			<PDToolbarButton Text=" Import"
+							 IconCssClass="fa-solid fa-download"
+							 CssClass="btn btn-info"
+							 ShiftRight="true"
+							 Click="ImportWorkspace" />
+
+			@if (_showInputFile)
+			{
+				<InputFile @ref="_inputFile" OnChange="UploadWorkspaceAsync" />
+			}
+
+			<PDToolbarButton Text=" Delete"
 							 IsEnabled="@(WorkspaceService.Workspace.Name != "default")"
 							 IconCssClass="fa-solid fa-trash"
 							 ShiftRight="true"
@@ -52,7 +63,7 @@
 							 IconCssClass="fa-solid fa-download"
 							 CssClass="btn btn-info"
 							 ShiftRight="true"
-							 Click="DownloadWorkspaceAsync" />
+							 Click="ExportWorkspaceAsync" />
 
 			<PDToolbarButton Text=""
 							 IsEnabled="@(WorkspaceService.Workspace.Name != "default")"

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 using PanoramicData.Blazor;
 using PanoramicData.Blazor.Models;
@@ -26,6 +27,9 @@ public partial class Home
 
 	[SupplyParameterFromQuery(Name = "workspace")]
 	private string? WorkspaceName { get; set; }
+
+	private InputFile? _inputFile;
+	private bool _showInputFile = false;
 
 	private readonly string AlphabetLowerCase = new(Enumerable.Range(97, 26).Select(n => (char)n).ToArray());
 
@@ -124,7 +128,13 @@ public partial class Home
 		await _table!.RefreshAsync();
 	}
 
-	private async Task DownloadWorkspaceAsync()
+	private void ImportWorkspace()
+	{
+		_showInputFile = true;
+		StateHasChanged();
+	}
+
+	private async Task ExportWorkspaceAsync()
 	{
 		var workspaceAsJson = JsonSerializer
 			.Serialize(
@@ -135,6 +145,53 @@ public partial class Home
 		using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(workspaceAsJson));
 		using var streamRef = new DotNetStreamReference(stream: memoryStream);
 		await JS.InvokeVoidAsync("downloadFileFromStream", $"{WorkspaceService.Workspace.Name}.json", streamRef);
+	}
+
+	private async Task UploadWorkspaceAsync(InputFileChangeEventArgs args)
+	{
+		var browserFiles = args.GetMultipleFiles();
+
+		if (browserFiles.Count == 0)
+		{
+			ToastService.Error("No files selected.", "Upload Error");
+		}
+
+		var firstWorkspaceName = string.Empty;
+		var fileIndex = 0;
+		foreach (var browserFile in browserFiles)
+		{
+			fileIndex++;
+
+			await using MemoryStream memoryStream = new();
+			await browserFile.OpenReadStream().CopyToAsync(memoryStream);
+			memoryStream.Position = 0;
+			var workspace = await JsonSerializer.DeserializeAsync<Workspace>(memoryStream, DefaultJsonSerializerOptions);
+			if (workspace is null)
+			{
+				ToastService.Error($"Workspace {fileIndex} failed to deserialize.  Skipping.", "Upload Error");
+				return;
+			}
+
+			if (string.IsNullOrWhiteSpace(workspace.Name))
+			{
+				ToastService.Error($"Workspace {fileIndex} has no name.  Skipping.", "Upload Error");
+				continue;
+			}
+			else
+			{
+				firstWorkspaceName = workspace.Name;
+			}
+
+			await WorkspaceService!.CreateWorkspaceAsync(workspace.Name, workspace.Expression, workspace.Variables, default);
+			ToastService.Success($"Workspace {fileIndex} imported.", "Workspace Import");
+		}
+
+		await Task.Delay(1000);
+
+		if (!string.IsNullOrWhiteSpace(firstWorkspaceName))
+		{
+			NavigationManager.NavigateTo($"/?workspace={firstWorkspaceName}", true);
+		}
 	}
 
 	private async Task DeleteWorkspaceAsync()
