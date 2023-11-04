@@ -122,9 +122,9 @@ public partial class Home
 
 	private async Task CreateWorkspaceAsync()
 	{
-		var newName = Guid.NewGuid().ToString();
+		var newName = Guid.NewGuid().ToString()[..8];
 		await WorkspaceService!.CreateWorkspaceAsync(newName, "1 + 1", [], default);
-		NavigationManager.NavigateTo($"/?workspace={newName}", false);
+		NavigationManager.NavigateTo($"/?workspace={newName}", true);
 	}
 
 	private async Task DeleteRowAsync()
