@@ -59,11 +59,17 @@
 							 ShiftRight="true"
 							 Click="CreateWorkspaceAsync" />
 
-			<PDToolbarButton Text=" Workspace"
+			<PDToolbarButton Text=""
 							 IconCssClass="fa-solid fa-download"
 							 CssClass="btn btn-info"
 							 ShiftRight="true"
 							 Click="ExportWorkspaceAsync" />
+
+			<PDToolbarButton Text=""
+							 IconCssClass="fa-solid fa-upload"
+							 CssClass="btn btn-info"
+							 ShiftRight="true"
+							 Click="ImportWorkspace" />
 
 			<PDToolbarButton Text=""
 							 IsEnabled="@(WorkspaceService.Workspace.Name != "default")"
@@ -74,6 +80,16 @@
 		</PDToolbar>
 	</div>
 </div>
+
+@if (_showInputFile)
+{
+<div class="row d-block d-lg-none">
+	<div class="col-12">
+		<InputFile @ref="_inputFile" OnChange="UploadWorkspaceAsync" />
+	</div>
+</div>
+}
+
 <div class="row">
 	<div class="col-lg-6 mt-3">
 		<h3><i class="fa-solid fa-keyboard" /> Input</h3>
