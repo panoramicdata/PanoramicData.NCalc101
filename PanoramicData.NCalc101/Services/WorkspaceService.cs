@@ -66,7 +66,7 @@ public class WorkspaceService(
 
 		try
 		{
-			await localStorageService.RemoveItemAsync(LocalStorageName(Workspace.Name), cancellationToken);
+			await localStorageService.RemoveItemAsync(LocalStorageName(name), cancellationToken);
 			if (await LastSelectedAsync(default) == name)
 			{
 				await localStorageService.RemoveItemAsync(LocalStorageLastSelectedStorageKey, cancellationToken);
@@ -221,14 +221,16 @@ public class WorkspaceService(
 
 	public async Task RenameAsync(string name, CancellationToken cancellationToken)
 	{
-		var workspace = Workspace;
+		var oldName = Workspace.Name;
 		Workspace = new Workspace
 		{
 			Name = name,
-			Expression = workspace.Expression,
-			Variables = workspace.Variables
+			Expression = Workspace.Expression,
+			Variables = Workspace.Variables
 		};
 
-		await DeleteAsync(workspace.Name, cancellationToken);
+		await DeleteAsync(oldName, cancellationToken);
+
+		await UpdateLocalStorageAsync(cancellationToken);
 	}
 }

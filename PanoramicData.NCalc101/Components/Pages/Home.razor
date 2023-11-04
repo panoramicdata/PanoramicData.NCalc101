@@ -5,40 +5,22 @@
 
 <PageTitle>NCalc 101</PageTitle>
 <div class="row">
-	<div class="col-12">
+	<div class="col-12 d-none d-lg-block">
 		<PDToolbar>
+			<h3 style="white-space: nowrap"><i class="fa-solid fa-desktop" /> Workspace</h3>
 			<PDToolbarTextbox Value="@WorkspaceService.Workspace.Name"
 							  ValueChanged="NameChangedAsync"
 							  Width="100%"
-							  Label="Workspace"
 							  ShowClearButton="false"
 							  />
-		</PDToolbar>
-	</div>
-</div>
-<div class="row">
-	<div class="col-12 d-none d-lg-block">
-		<PDToolbar>
-			<PDToolbarDropdown Text=" Add Variable"
-							   IconCssClass="fa fa-plus"
-							   CssClass="btn btn-success"
-							   IsEnabled="true"
-							   Click="@(async x => await AddVariableAsync(x))"
-							   Items="_addVariableMenuItems" />
 
-			<PDToolbarButton Text=" Delete Variable(s)"
-							 IsEnabled="@(_table!.Selection is not null)"
-							 IconCssClass="fa-solid fa-trash"
-							 CssClass="btn btn-danger"
-							 Click="DeleteRowAsync" />
-
-			<PDToolbarButton Text="Add Workspace"
+			<PDToolbarButton Text=" Add Workspace"
 							 IconCssClass="fa-solid fa-plus"
 							 CssClass="btn btn-success"
 							 ShiftRight="true"
 							 Click="CreateWorkspaceAsync" />
 
-			<PDToolbarButton Text="Delete Workspace"
+			<PDToolbarButton Text=" Delete Workspace"
 							 IsEnabled="@(WorkspaceService.Workspace.Name != "default")"
 							 IconCssClass="fa-solid fa-trash"
 							 ShiftRight="true"
@@ -48,26 +30,19 @@
 	</div>
 	<div class="col-12 d-block d-lg-none">
 		<PDToolbar>
-			<PDToolbarDropdown Text=" Var"
-							   IconCssClass="fa fa-plus"
-							   CssClass="btn btn-success"
-							   IsEnabled="true"
-							   Click="@(async x => await AddVariableAsync(x))"
-							   Items="_addVariableMenuItems" />
+			<h3><i class="fa-solid fa-desktop" /></h3>
+			<PDToolbarTextbox Value="@WorkspaceService.Workspace.Name"
+							  ValueChanged="NameChangedAsync"
+							  Width="100%"
+							  ShowClearButton="false" />
 
-			<PDToolbarButton Text="Var"
-							 IsEnabled="@(_table!.Selection is not null)"
-							 IconCssClass="fa-solid fa-trash"
-							 CssClass="btn btn-danger"
-							 Click="DeleteRowAsync" />
-
-			<PDToolbarButton Text=" WS"
+			<PDToolbarButton Text=""
 							 IconCssClass="fa-solid fa-plus"
 							 CssClass="btn btn-success"
 							 ShiftRight="true"
 							 Click="CreateWorkspaceAsync" />
 
-			<PDToolbarButton Text=" WS"
+			<PDToolbarButton Text=""
 							 IsEnabled="@(WorkspaceService.Workspace.Name != "default")"
 							 IconCssClass="fa-solid fa-trash"
 							 CssClass="btn btn-danger"
@@ -79,14 +54,16 @@
 <div class="row">
 	<div class="col-lg-6 mt-3">
 		<h3><i class="fa-solid fa-keyboard" /> Input</h3>
-		<PDTextArea Value="@WorkspaceService.Workspace.Expression"
-					Rows="10"
-					CssClass="d-none d-lg-block"
-					ValueChanged="OnExpressionChangedAsync" />
-		<PDTextArea Value="@WorkspaceService.Workspace.Expression"
-					Rows="5"
-					CssClass="d-block d-lg-none"
-					ValueChanged="OnExpressionChangedAsync" />
+		<div class="ncalc-input">
+			<PDTextArea Value="@WorkspaceService.Workspace.Expression"
+						Rows="10"
+						CssClass="d-none d-lg-block"
+						ValueChanged="OnExpressionChangedAsync" />
+			<PDTextArea Value="@WorkspaceService.Workspace.Expression"
+						Rows="5"
+						CssClass="d-block d-lg-none"
+						ValueChanged="OnExpressionChangedAsync" />
+		</div>
 	</div>
 	<div class="col-lg-6 mt-3">
 		@if (_exceptionMessage == string.Empty)
@@ -103,14 +80,60 @@
 		}
 		else
 		{
-			<h3><i class="fa-solid fa-warning mt-3" /> Error</h3>
-			<PDTextArea @bind-Value="_exceptionMessage" CssClass="result" IsReadOnly="true" />
+			<h3><i class="fa-solid fa-warning" /> Error (@_exceptionType)</h3>
+			<PDTextArea @bind-Value="_exceptionMessage"
+						Rows="10"
+						CssClass="result d-none d-lg-block"
+						IsReadOnly="true" />
+			<PDTextArea @bind-Value="_exceptionMessage"
+						Rows="5"
+						CssClass="result d-block d-lg-none"
+						IsReadOnly="true" />
 		}
 	</div>
 </div>
 <div class="row mt-3">
+	<div class="col-12 d-none d-lg-block">
+		<PDToolbar>
+			<h3 style="white-space: nowrap"><i class="fa-solid fa-list" /> Variables</h3>
+			<PDToolbarDropdown Text=" Variable"
+							   IconCssClass="fa fa-plus"
+							   CssClass="btn btn-success"
+							   IsEnabled="true"
+							   Click="@(async x => await AddVariableAsync(x))"
+							   ShiftRight="true"
+							   Items="_addVariableMenuItems" />
+
+			<PDToolbarButton Text=" Variable(s)"
+							 IsEnabled="VariablesSelected"
+							 IconCssClass="fa-solid fa-trash"
+							 CssClass="btn btn-danger"
+							 ShiftRight="true"
+							 Click="DeleteRowAsync" />
+		</PDToolbar>
+	</div>
+	<div class="col-12 d-block d-lg-none">
+		<PDToolbar>
+			<h3 style="white-space: nowrap;"><i class="fa-solid fa-list" /> Variables</h3>
+			<PDToolbarDropdown Text=""
+							   IconCssClass="fa fa-plus"
+							   CssClass="btn btn-success"
+							   IsEnabled="true"
+							   Click="@(async x => await AddVariableAsync(x))"
+							   ShiftRight="true"
+							   Items="_addVariableMenuItems" />
+
+			<PDToolbarButton Text=""
+							 IsEnabled="VariablesSelected"
+							 IconCssClass="fa-solid fa-trash"
+							 CssClass="btn btn-danger"
+							 ShiftRight="true"
+							 Click="DeleteRowAsync" />
+		</PDToolbar>
+	</div>
+</div>
+<div class="row mt-3">
 	<div class="col-12">
-		<h3><i class="fa-solid fa-list" /> Variables</h3>
 		<PDTable
 			TItem="Variable"
 			@ref = "_table"
@@ -123,6 +146,7 @@
 			KeyField="v => v.Id"
 			SelectionMode="TableSelectionMode.Multiple"
 			ExceptionHandler="TableExceptionHandler"
+			SelectionChanged="VariableSelectionChanged"
 		>
 			<PDColumn TItem="Variable"
 					  Id="Type"

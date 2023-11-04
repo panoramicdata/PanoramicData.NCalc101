@@ -27,14 +27,15 @@ public partial class Home
 	private string _result = string.Empty;
 	private string _resultType = string.Empty;
 	private string _exceptionMessage = string.Empty;
+	private string _exceptionType = string.Empty;
 	private readonly List<MenuItem> _addVariableMenuItems = [
-		new MenuItem { Text = "&&String", IconCssClass = "fa-solid fa-a" },
-		new MenuItem { Text = "&&Integer", IconCssClass = "fa-solid fa-1" },
-		new MenuItem { Text = "&&Double", IconCssClass = "fa-solid fa-temperature-half" },
-		new MenuItem { Text = "&&Boolean", IconCssClass = "fa-solid fa-toggle-on" },
-		new MenuItem { Text = "D&&ateTime", IconCssClass = "fa-solid fa-clock" },
-		new MenuItem { Text = "D&&ateTimeOffset", IconCssClass = "fa-solid fa-clock" },
-		new MenuItem { Text = "&&Expression", IconCssClass = "fa-solid fa-calculator" },
+		new MenuItem { Text = "String", IconCssClass = "fa-solid fa-a" },
+		new MenuItem { Text = "Integer", IconCssClass = "fa-solid fa-1" },
+		new MenuItem { Text = "Double", IconCssClass = "fa-solid fa-temperature-half" },
+		new MenuItem { Text = "Boolean", IconCssClass = "fa-solid fa-toggle-on" },
+		new MenuItem { Text = "DateTime", IconCssClass = "fa-solid fa-clock" },
+		new MenuItem { Text = "DateTimeOffset", IconCssClass = "fa-regular fa-clock" },
+		new MenuItem { Text = "Expression", IconCssClass = "fa-solid fa-calculator" },
 	];
 
 	protected override async Task OnInitializedAsync()
@@ -151,6 +152,13 @@ public partial class Home
 		await _table!.RefreshAsync();
 	}
 
+	private void VariableSelectionChanged()
+	{
+		StateHasChanged();
+	}
+
+	private bool VariablesSelected => _table!.Selection!.Count > 0;
+
 	private async Task<string> GetUnusedVariableNameAsync()
 	{
 		var existingVariables = await WorkspaceService!
@@ -202,11 +210,13 @@ public partial class Home
 			_result = output?.ToString() ?? string.Empty;
 			_resultType = output is null ? "null" : output.GetType().ToString();
 			_exceptionMessage = string.Empty;
+			_exceptionType = string.Empty;
 		}
 		catch (Exception ex)
 		{
 			_result = string.Empty;
 			_exceptionMessage = ex.Message;
+			_exceptionType = ex.GetType().ToString();
 		}
 	}
 

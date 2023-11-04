@@ -3,6 +3,10 @@
 	height: 100vh;
 }
 
+.ncalc-input {
+	font-family: Consolas, Courier, monospace;
+}
+
 .result {
 	width: 100vw;
 	height: 100vh;
