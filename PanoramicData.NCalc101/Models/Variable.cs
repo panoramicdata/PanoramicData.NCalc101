@@ -32,7 +32,7 @@ public class Variable
 		_ => throw new InvalidOperationException($"Unsupported type: {Type}"),
 	};
 
-	internal object? GetFontAwesome() => Type switch
+	internal object? GetFontAwesome() => "fa-fw " + Type switch
 	{
 		"System.Boolean" => "fa-solid fa-toggle-on",
 		"System.DateTime" => "fa-solid fa-clock",

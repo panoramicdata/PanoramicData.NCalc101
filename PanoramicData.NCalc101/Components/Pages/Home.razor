@@ -20,6 +20,12 @@
 							 ShiftRight="true"
 							 Click="CreateWorkspaceAsync" />
 
+			<PDToolbarButton Text=" Export Workspace"
+							 IconCssClass="fa-solid fa-download"
+							 CssClass="btn btn-info"
+							 ShiftRight="true"
+							 Click="DownloadWorkspaceAsync" />
+
 			<PDToolbarButton Text=" Delete Workspace"
 							 IsEnabled="@(WorkspaceService.Workspace.Name != "default")"
 							 IconCssClass="fa-solid fa-trash"
@@ -41,6 +47,12 @@
 							 CssClass="btn btn-success"
 							 ShiftRight="true"
 							 Click="CreateWorkspaceAsync" />
+
+			<PDToolbarButton Text=" Workspace"
+							 IconCssClass="fa-solid fa-download"
+							 CssClass="btn btn-info"
+							 ShiftRight="true"
+							 Click="DownloadWorkspaceAsync" />
 
 			<PDToolbarButton Text=""
 							 IsEnabled="@(WorkspaceService.Workspace.Name != "default")"

@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using PanoramicData.Blazor;
 using PanoramicData.Blazor.Models;
 using PanoramicData.NCalc101.Interfaces;
 using PanoramicData.NCalc101.Models;
 using PanoramicData.NCalcExtensions;
+using System.Text;
+using System.Text.Json;
 
 namespace PanoramicData.NCalc101.Components.Pages;
 
@@ -18,6 +21,9 @@ public partial class Home
 	[Inject]
 	public IWorkspaceService WorkspaceService { get; set; } = null!;
 
+	[Inject]
+	IJSRuntime JS { get; set; } = null!;
+
 	[SupplyParameterFromQuery(Name = "workspace")]
 	private string? WorkspaceName { get; set; }
 
@@ -29,14 +35,18 @@ public partial class Home
 	private string _exceptionMessage = string.Empty;
 	private string _exceptionType = string.Empty;
 	private readonly List<MenuItem> _addVariableMenuItems = [
-		new MenuItem { Text = "String", IconCssClass = "fa-solid fa-a" },
-		new MenuItem { Text = "Integer", IconCssClass = "fa-solid fa-1" },
-		new MenuItem { Text = "Double", IconCssClass = "fa-solid fa-temperature-half" },
-		new MenuItem { Text = "Boolean", IconCssClass = "fa-solid fa-toggle-on" },
-		new MenuItem { Text = "DateTime", IconCssClass = "fa-solid fa-clock" },
-		new MenuItem { Text = "DateTimeOffset", IconCssClass = "fa-regular fa-clock" },
-		new MenuItem { Text = "Expression", IconCssClass = "fa-solid fa-calculator" },
+		new MenuItem { Text = "String", IconCssClass = "fa-fw fa-solid fa-a" },
+		new MenuItem { Text = "Integer", IconCssClass = "fa-fw fa-solid fa-1" },
+		new MenuItem { Text = "Double", IconCssClass = "fa-fw fa-solid fa-temperature-half" },
+		new MenuItem { Text = "Boolean", IconCssClass = "fa-fw fa-solid fa-toggle-on" },
+		new MenuItem { Text = "DateTime", IconCssClass = "fa-fw fa-solid fa-clock" },
+		new MenuItem { Text = "DateTimeOffset", IconCssClass = "fa-fw fa-regular fa-clock" },
+		new MenuItem { Text = "Expression", IconCssClass = "fa-fw fa-solid fa-calculator" },
 	];
+	private readonly static JsonSerializerOptions DefaultJsonSerializerOptions = new()
+	{
+		WriteIndented = true
+	};
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -112,6 +122,19 @@ public partial class Home
 			Value = string.Empty
 		}, CancellationToken.None);
 		await _table!.RefreshAsync();
+	}
+
+	private async Task DownloadWorkspaceAsync()
+	{
+		var workspaceAsJson = JsonSerializer
+			.Serialize(
+				WorkspaceService.Workspace,
+				DefaultJsonSerializerOptions
+			);
+		// Load workspaceAsJson into a memory stream
+		using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(workspaceAsJson));
+		using var streamRef = new DotNetStreamReference(stream: memoryStream);
+		await JS.InvokeVoidAsync("downloadFileFromStream", $"{WorkspaceService.Workspace.Name}.json", streamRef);
 	}
 
 	private async Task DeleteWorkspaceAsync()
