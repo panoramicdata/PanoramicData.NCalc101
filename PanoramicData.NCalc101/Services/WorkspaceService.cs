@@ -213,7 +213,7 @@ public class WorkspaceService(
 		await UpdateLocalStorageAsync(cancellationToken);
 	}
 
-	public async Task<string> LastSelectedAsync(CancellationToken cancellationToken)
+	public async Task<string?> LastSelectedAsync(CancellationToken cancellationToken)
 	{
 		return await localStorageService
 			.GetItemAsync<string>(LocalStorageLastSelectedStorageKey, cancellationToken);

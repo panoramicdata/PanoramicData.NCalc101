@@ -1,6 +1,6 @@
 ﻿namespace PanoramicData.NCalc101.Interfaces;
 
-public enum ToastServiceCloseBehaviour
+public enum ToastServiceCloseBehavior
 {
 	CloseAutomatically,
 	ManualCloseRequired

@@ -30,9 +30,10 @@ public partial class NavMenu
 		_workspaceNames.AddRange(await WorkspaceService.GetNamesAsync(default));
 	}
 
-	private async Task ClickAsync(string workspaceName)
+	private Task ClickAsync(string workspaceName)
 	{
 		NavigationManager.NavigateTo($"/?workspace={workspaceName}", true);
+		return Task.CompletedTask;
 	}
 
 	private async Task DeleteAsync(string workspaceName)

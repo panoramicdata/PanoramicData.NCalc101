@@ -7,23 +7,23 @@ public interface IToastService
 		string message,
 		string? title = null,
 		bool allowHtml = false,
-		ToastServiceCloseBehaviour closeBehaviour = ToastServiceCloseBehaviour.CloseAutomatically);
+		ToastServiceCloseBehavior closeBehaviour = ToastServiceCloseBehavior.CloseAutomatically);
 
 	void Success(
 		string message,
 		string? title = null,
 		bool allowHtml = false,
-		ToastServiceCloseBehaviour closeBehaviour = ToastServiceCloseBehaviour.CloseAutomatically);
+		ToastServiceCloseBehavior closeBehaviour = ToastServiceCloseBehavior.CloseAutomatically);
 
 	void Warning(
 		string message,
 		string? title = null,
 		bool allowHtml = false,
-		ToastServiceCloseBehaviour closeBehaviour = ToastServiceCloseBehaviour.CloseAutomatically);
+		ToastServiceCloseBehavior closeBehaviour = ToastServiceCloseBehavior.CloseAutomatically);
 
 	void Error(
 		string message,
 		string? title = null,
 		bool allowHtml = false,
-		ToastServiceCloseBehaviour closeBehaviour = ToastServiceCloseBehaviour.CloseAutomatically);
+		ToastServiceCloseBehavior closeBehaviour = ToastServiceCloseBehavior.CloseAutomatically);
 }
