@@ -124,6 +124,12 @@ public class WorkspaceService(
 
 			await UpdateLocalStorageAsync(cancellationToken);
 
+			await NotifyAsync(new WorkspaceNotification
+			{
+				Type = NotificationType.VariablesUpdated,
+				Message = $"Variable '{item.Name}' created."
+			}, cancellationToken);
+
 			return new OperationResponse
 			{
 				Success = true
@@ -164,6 +170,12 @@ public class WorkspaceService(
 			Workspace.Variables.Remove(existing);
 
 			await UpdateLocalStorageAsync(cancellationToken);
+
+			await NotifyAsync(new WorkspaceNotification
+			{
+				Type = NotificationType.VariablesUpdated,
+				Message = $"Variable '{item.Name}' deleted."
+			}, cancellationToken);
 
 			return new OperationResponse
 			{

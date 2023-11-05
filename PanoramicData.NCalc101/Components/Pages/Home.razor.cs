@@ -71,12 +71,29 @@ public partial class Home
 			}
 		);
 
+		WorkspaceService.Subscribe(
+			NotificationType.VariablesUpdated,
+			async notification =>
+			{
+				await VariableEditCommitedAsync();
+			}
+		);
+
 		if (string.IsNullOrWhiteSpace(WorkspaceName))
 		{
 			WorkspaceName = (await WorkspaceService.LastSelectedAsync(default)) ?? "default";
 		}
 
 		await WorkspaceService.SelectAsync(WorkspaceName, default);
+	}
+
+	private async Task VariableEditCommitedAsync()
+	{
+		await _table!.RefreshAsync();
+		_expression = WorkspaceService.Workspace.Expression ?? string.Empty;
+		_expression2 = WorkspaceService.Workspace.Expression ?? string.Empty;
+		await EvaluateAsync();
+		StateHasChanged();
 	}
 
 	private async Task NameChangedAsync(string newName)
@@ -132,8 +149,6 @@ public partial class Home
 			Type = typeof(T).ToString(),
 			Value = string.Empty
 		}, CancellationToken.None);
-
-		await _table!.RefreshAsync();
 	}
 
 	private void ImportWorkspace()

@@ -178,6 +178,7 @@
 				 DataProvider="WorkspaceService"
 				 CssClass="variable-table"
 				 AllowEdit="true"
+				 AfterEditCommitted="VariableEditCommitedAsync"
 				 DoubleClick="@(async () => await _table!.BeginEditAsync())"
 				 UserSelectable="true"
 				 KeyField="v => v.Id"
