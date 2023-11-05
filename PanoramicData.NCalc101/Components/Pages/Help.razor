@@ -1,0 +1,102 @@
+﻿@page "/help"
+@using PanoramicData.Blazor
+
+<PageTitle>Help</PageTitle>
+<h1><i class="fa-fw fa-solid fa-question-circle"></i>&nbsp;Help</h1>
+<h2><i class="fa-fw fa-solid fa-play"></i>&nbsp;Getting started</h2>
+<p>
+	NCalc is a mathematical expressions evaluator in .NET. NCalc can parse any expression and evaluate the result, including static or dynamic parameters and custom functions, or 'extensions'.
+</p>
+<p>
+	A comprehensive set of extensions to NCalc are provided by Panoramic Data's NCalc Extensions project.
+	See more details and documentation at <a href="https://github.com/panoramicdata/PanoramicData.NCalcExtensions" target="_blank">https://github.com/panoramicdata/PanoramicData.NCalcExtensions</a>
+</p>
+<p>
+	To get started, simply type an expression into the input box.  There is no need to press enter or click a button, the expression will be evaluated as you type.
+</p>
+<p>
+	Alternatively, see the <a href="/examples">examples page</a>.
+	Here, clicking on an example will create a new Workspace and switch to it.
+	When you are finished with the example, you can delete it if you wish.
+</p>
+
+<h2><i class="fa-fw fa-solid fa-desktop"></i>&nbsp;Workspaces</h2>
+<p>
+	You can have multiple workspaces, each with their own expression and set of variables.
+</p>
+<p>
+	There is no need to save workspaces, they are automatically saved to your browser profile's local storage.
+	Your browser will remember your workspaces even if you close the browser and come back later.
+</p>
+<p>
+	If you need to share your workspaces with others, you can export them to a JSON file and import them into another browser or browser profile.
+</p>
+<h3><i class="fa-fw fa-solid fa-plus"></i>&nbsp;Creating new workspaces</h3>
+<p>
+	To add a workspace, either:
+	<ul>
+		<li>Rename the default Workspace - this will clone the default Workspace.</li>
+		<li>Create a new workspace with the plus button and rename it.</li>
+	</ul>
+</p>
+<h3><i class="fa-fw fa-solid fa-edit"></i>&nbsp;Renaming workspaces</h3>
+<p>
+	To rename a workspace, simply change the name at the top of the screen.
+	Note that you cannot rename the default workspace.
+	Doing so will create a new workspace and keep your original work in the default workspace.
+</p>
+<h3><i class="fa-fw fa-solid fa-trash"></i>&nbsp;Deleting workspaces</h3>
+<p>
+	To delete a workspace, simply click the trash can icon next to the workspace name.
+	Note that you cannot delete the default workspace.
+</p>
+<h3><i class="fa-fw fa-solid fa-arrow-right-rotate"></i>&nbsp;Switching workspaces</h3>
+<p>
+	To switch workspaces, simply click on the workspace name in the navigation menu.
+	Mobile users will need to click the hamburger icon to open the navigation menu.
+</p>
+<h3><i class="fa-fw fa-solid fa-download"></i>&nbsp;Exporting workspaces</h3>
+<p>
+	To export a workspace, simply click the export icon next to the workspace name.
+	This will download a JSON file containing the workspace data.
+</p>
+<h3><i class="fa-fw fa-solid fa-upload"></i>&nbsp;Importing workspaces</h3>
+<p>
+	To import a workspace, simply click the import icon next to the workspace name.
+	This will open a file dialog where you can select the JSON file containing the workspace data.
+</p>
+
+<h2><i class="fa-fw fa-solid fa-list"></i>&nbsp;Variables</h2>
+<h3><i class="fa-fw fa-solid fa-table"></i>&nbsp;Defining variables</h3>
+<p>
+	Variables can be defined in the table at the bottom of the screen.
+</p>
+<h3><i class="fa-fw fa-solid fa-plus"></i>&nbsp;Adding variables</h3>
+<p>
+	To add a variable:
+	<ul>
+		<li>Click the plus button</li>
+		<li>Select the variable type from the options provided</li>
+		<li>Change the variable name, if required</li>
+		<li>Change the variable value, if required</li>
+	</ul>
+</p>
+<h3><i class="fa-fw fa-solid fa-list"></i>&nbsp;Variable types</h3>
+<p>
+	You can choose a standard .NET type for your variable.
+	If you need more types, choose the "Expression" option and enter a valid NCalc expression.
+</p>
+<h3><i class="fa-fw fa-solid fa-edit"></i>&nbsp;Editing variables</h3>
+<p>
+	To edit a variable:
+	<ul>
+		<li>Double click the variable row</li>
+		<li>Change the variable name, if required</li>
+		<li>Change the variable value, if required</li>
+	</ul>
+	Note that you cannot change the variable type.
+</p>
+<h3><i class="fa-fw fa-solid fa-trash"></i>&nbsp;Deleting variables</h3>
+<p>
+	To delete one or more variables, simply select the variables to delete and click the trash can icon.
+</p>

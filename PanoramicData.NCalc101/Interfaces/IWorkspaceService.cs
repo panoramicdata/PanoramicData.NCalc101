@@ -3,7 +3,7 @@ using PanoramicData.NCalc101.Models;
 
 namespace PanoramicData.NCalc101.Interfaces;
 
-public interface IWorkspaceService : IDataProviderService<Variable>
+public interface IWorkspaceService : IDataProviderService<Variable>, INotificationService<WorkspaceNotification>
 {
 	public Task<List<string>> GetNamesAsync(CancellationToken cancellationToken);
 

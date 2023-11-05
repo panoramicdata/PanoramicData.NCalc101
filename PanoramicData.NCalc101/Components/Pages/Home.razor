@@ -94,12 +94,12 @@
 	<div class="col-lg-6 mt-3">
 		<h3><i class="fa-solid fa-keyboard" /> Input</h3>
 		<div class="ncalc-input">
-			<PDTextArea Value="@WorkspaceService.Workspace.Expression"
+			<PDTextArea Value="@_expression"
 						Rows="10"
 						CssClass="d-none d-lg-block"
 						ValueChanged="OnExpressionChangedAsync" />
-			<PDTextArea Value="@WorkspaceService.Workspace.Expression"
-						Rows="5"
+			<PDTextArea Value="@_expression2"
+						Rows="4"
 						CssClass="d-block d-lg-none"
 						ValueChanged="OnExpressionChangedAsync" />
 		</div>
@@ -113,7 +113,7 @@
 						CssClass="result d-none d-lg-block"
 						IsReadOnly="true" />
 			<PDTextArea @bind-Value="_result"
-						Rows="5"
+						Rows="4"
 						CssClass="result d-block d-lg-none"
 						IsReadOnly="true" />
 		}
@@ -173,20 +173,17 @@
 </div>
 <div class="row mt-3">
 	<div class="col-12">
-		<PDTable
-			TItem="Variable"
-			@ref = "_table"
-			DataProvider="WorkspaceService"
-			CssClass="variable-table"
-			AllowEdit="true"
-			AfterEditCommitted="OnVariableChangedAsync"
-			DoubleClick="OnDoubleClickRowAsync"
-			UserSelectable="true"
-			KeyField="v => v.Id"
-			SelectionMode="TableSelectionMode.Multiple"
-			ExceptionHandler="TableExceptionHandler"
-			SelectionChanged="VariableSelectionChanged"
-		>
+		<PDTable TItem="Variable"
+				 @ref = "_table"
+				 DataProvider="WorkspaceService"
+				 CssClass="variable-table"
+				 AllowEdit="true"
+				 DoubleClick="@(async () => await _table!.BeginEditAsync())"
+				 UserSelectable="true"
+				 KeyField="v => v.Id"
+				 SelectionMode="TableSelectionMode.Multiple"
+				 ExceptionHandler="TableExceptionHandler"
+				 SelectionChanged="VariableSelectionChanged" >
 			<PDColumn TItem="Variable"
 					  Id="Type"
 					  Title="Type">

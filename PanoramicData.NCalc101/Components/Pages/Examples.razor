@@ -16,7 +16,7 @@
 <hr />
 @foreach(var example in Example.Examples)
 {
-	<h3 id="@example.GetId()">@example.Name <PDButton CssClass="btn btn-primary" Click="() => CreateExampleWorkspaceAsync(example)">Try it out!</PDButton></h3>
+	<h3 id="@example.GetId()">@example.Name <PDButton CssClass="btn btn-success" IconCssClass="fa-fw fa-solid fa-plus" Click="() => CreateExampleWorkspaceAsync(example)">Add as a Workspace</PDButton></h3>
 	<h4><i class="fa-solid fa-keyboard"></i> Expression</h4>
 	<pre>@example.Expression</pre>
 	@if(example.Variables.Count > 0)
@@ -32,13 +32,13 @@
 			</thead>
 			<tbody>
 				@foreach(var variable in example.Variables)
-{
-	<tr>
+				{
+					<tr>
 						<td><i class="@variable.GetFontAwesome()"></i> @variable.Type</td>
 						<td>@variable.Name</td>
 						<td>@variable.Value</td>
 					</tr>
-}
+				}
 			</tbody>
 		</table>
 }

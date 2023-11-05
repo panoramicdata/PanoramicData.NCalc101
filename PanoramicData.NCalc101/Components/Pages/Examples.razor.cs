@@ -15,6 +15,6 @@ public partial class Examples
 	public async Task CreateExampleWorkspaceAsync(Example example)
 	{
 		await WorkspaceService!.CreateWorkspaceAsync(example.Name, example.Expression, example.Variables, default);
-		NavigationManager.NavigateTo($"/?workspace={example.Name}", true);
+		NavigationManager.NavigateTo($"/?workspace={example.Name}", false);
 	}
 }

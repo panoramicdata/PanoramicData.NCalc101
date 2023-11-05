@@ -30,6 +30,8 @@ public partial class Home
 
 	private InputFile? _inputFile;
 	private bool _showInputFile = false;
+	private string _expression = string.Empty;
+	private string _expression2 = string.Empty;
 
 	private readonly string AlphabetLowerCase = new(Enumerable.Range(97, 26).Select(n => (char)n).ToArray());
 
@@ -54,27 +56,32 @@ public partial class Home
 
 	protected override async Task OnInitializedAsync()
 	{
+		await base.OnInitializedAsync();
+
+		WorkspaceService.Subscribe(
+			NotificationType.CurrentWorkspaceUpdated,
+			async notification =>
+			{
+				NavigationManager.NavigateTo($"?workspace={WorkspaceService.Workspace.Name}", false);
+				await _table!.RefreshAsync();
+				_expression = WorkspaceService.Workspace.Expression ?? string.Empty;
+				_expression2 = WorkspaceService.Workspace.Expression ?? string.Empty;
+				await EvaluateAsync();
+				StateHasChanged();
+			}
+		);
+
 		if (string.IsNullOrWhiteSpace(WorkspaceName))
 		{
 			WorkspaceName = (await WorkspaceService.LastSelectedAsync(default)) ?? "default";
-
-			// Update the deep link
-			NavigationManager.NavigateTo($"?workspace={WorkspaceService.Workspace.Name}", false);
 		}
 
 		await WorkspaceService.SelectAsync(WorkspaceName, default);
-
-		await _table!.RefreshAsync();
-
-		await EvaluateAsync();
-
-		await base.OnInitializedAsync();
 	}
 
 	private async Task NameChangedAsync(string newName)
 	{
 		await WorkspaceService.RenameAsync(newName, default);
-		NavigationManager.NavigateTo($"?workspace={WorkspaceService.Workspace.Name}", true);
 	}
 
 	private async Task AddVariableAsync(string value)
@@ -125,6 +132,7 @@ public partial class Home
 			Type = typeof(T).ToString(),
 			Value = string.Empty
 		}, CancellationToken.None);
+
 		await _table!.RefreshAsync();
 	}
 
@@ -190,21 +198,19 @@ public partial class Home
 
 		if (!string.IsNullOrWhiteSpace(firstWorkspaceName))
 		{
-			NavigationManager.NavigateTo($"/?workspace={firstWorkspaceName}", true);
+			await WorkspaceService.SelectAsync(firstWorkspaceName, default);
 		}
 	}
 
 	private async Task DeleteWorkspaceAsync()
 	{
 		await WorkspaceService!.DeleteAsync(WorkspaceService.Workspace.Name, default);
-		NavigationManager.NavigateTo("/", true);
 	}
 
 	private async Task CreateWorkspaceAsync()
 	{
 		var newName = Guid.NewGuid().ToString()[..8];
 		await WorkspaceService!.CreateWorkspaceAsync(newName, "1 + 1", [], default);
-		NavigationManager.NavigateTo($"/?workspace={newName}", true);
 	}
 
 	private async Task DeleteRowAsync()
@@ -254,16 +260,6 @@ public partial class Home
 		return variableName;
 	}
 
-	private async Task OnDoubleClickRowAsync()
-	{
-		await _table!.BeginEditAsync();
-	}
-
-	private async Task OnVariableChangedAsync()
-	{
-		await EvaluateAsync();
-	}
-
 	private void TableExceptionHandler(Exception e)
 	{
 		ToastService.Error(e.Message, "Table Exception");
@@ -272,6 +268,16 @@ public partial class Home
 	private async Task OnExpressionChangedAsync(string expression)
 	{
 		await WorkspaceService.SetExpressionAsync(expression, default);
+		if (_expression != expression)
+		{
+			_expression = expression;
+		}
+
+		if (_expression2 != expression)
+		{
+			_expression2 = expression;
+		}
+
 		await EvaluateAsync();
 	}
 

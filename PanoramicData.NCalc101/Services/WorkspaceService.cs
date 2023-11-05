@@ -14,6 +14,8 @@ public class WorkspaceService(
 	private readonly ILocalStorageService localStorageService = localStorageService;
 	private readonly ILogger logger = logger;
 
+	private readonly Dictionary<NotificationType, List<Action<WorkspaceNotification>>> _callbacks = [];
+
 	public async Task<List<string>> GetNamesAsync(CancellationToken cancellationToken)
 	{
 		var workspaceNames = (await localStorageService.KeysAsync(cancellationToken))
@@ -30,7 +32,9 @@ public class WorkspaceService(
 		return workspaceNames;
 	}
 
-	public async Task SelectAsync(string name, CancellationToken cancellationToken)
+	public async Task SelectAsync(
+		string name,
+		CancellationToken cancellationToken)
 	{
 		var key = LocalStorageName(name);
 		if (await localStorageService.ContainKeyAsync(key, cancellationToken))
@@ -49,6 +53,12 @@ public class WorkspaceService(
 
 			await localStorageService.SetItemAsync(key, Workspace, cancellationToken);
 		}
+
+		await NotifyAsync(new WorkspaceNotification
+		{
+			Type = NotificationType.CurrentWorkspaceUpdated,
+			Message = $"Workspace '{name}' selected."
+		}, cancellationToken);
 	}
 
 	public Workspace Workspace { get; private set; } = new Workspace
@@ -71,6 +81,22 @@ public class WorkspaceService(
 			{
 				await localStorageService.RemoveItemAsync(LocalStorageLastSelectedStorageKey, cancellationToken);
 			}
+
+			var workspaceNames = await GetNamesAsync(cancellationToken);
+			if (workspaceNames.Count == 0)
+			{
+				await SelectAsync("default", cancellationToken);
+			}
+			else
+			{
+				await SelectAsync(workspaceNames[0], cancellationToken);
+			}
+
+			await NotifyAsync(new WorkspaceNotification
+			{
+				Type = NotificationType.WorkspaceListUpdated,
+				Message = $"Workspace '{name}' deleted."
+			}, cancellationToken);
 		}
 		catch (Exception ex)
 		{
@@ -116,11 +142,10 @@ public class WorkspaceService(
 	}
 
 	private ValueTask UpdateLocalStorageAsync(CancellationToken cancellationToken)
-	{
-		return localStorageService.SetItemAsync(LocalStorageName(Workspace.Name), Workspace, cancellationToken);
-	}
+		=> localStorageService.SetItemAsync(LocalStorageName(Workspace.Name), Workspace, cancellationToken);
 
-	private static string LocalStorageName(string name) => $"{LocalStorageWorkspacePrefix}{name}";
+	private static string LocalStorageName(string name)
+		=> $"{LocalStorageWorkspacePrefix}{name}";
 
 	public async Task<OperationResponse> DeleteAsync(Variable item, CancellationToken cancellationToken)
 	{
@@ -137,7 +162,6 @@ public class WorkspaceService(
 			}
 
 			Workspace.Variables.Remove(existing);
-
 
 			await UpdateLocalStorageAsync(cancellationToken);
 
@@ -179,6 +203,12 @@ public class WorkspaceService(
 
 			await UpdateLocalStorageAsync(cancellationToken);
 
+			await NotifyAsync(new WorkspaceNotification
+			{
+				Type = NotificationType.VariablesUpdated,
+				Message = $"Variable '{item.Name}' updated."
+			}, cancellationToken);
+
 			return new OperationResponse
 			{
 				Success = true
@@ -201,7 +231,11 @@ public class WorkspaceService(
 		await UpdateLocalStorageAsync(cancellationToken);
 	}
 
-	public async Task CreateWorkspaceAsync(string name, string expression, List<Variable> variables, CancellationToken cancellationToken)
+	public async Task CreateWorkspaceAsync(
+		string name,
+		string expression,
+		List<Variable> variables,
+		CancellationToken cancellationToken)
 	{
 		Workspace = new Workspace
 		{
@@ -211,6 +245,14 @@ public class WorkspaceService(
 		};
 
 		await UpdateLocalStorageAsync(cancellationToken);
+
+		await NotifyAsync(new WorkspaceNotification
+		{
+			Type = NotificationType.WorkspaceListUpdated,
+			Message = $"Workspace '{name}' created."
+		}, cancellationToken);
+
+		await SelectAsync(name, cancellationToken);
 	}
 
 	public async Task<string?> LastSelectedAsync(CancellationToken cancellationToken)
@@ -219,18 +261,47 @@ public class WorkspaceService(
 			.GetItemAsync<string>(LocalStorageLastSelectedStorageKey, cancellationToken);
 	}
 
-	public async Task RenameAsync(string name, CancellationToken cancellationToken)
+	public async Task RenameAsync(
+		string name,
+		CancellationToken cancellationToken)
 	{
-		var oldName = Workspace.Name;
-		Workspace = new Workspace
+		var oldWorkspace = Workspace;
+
+
+		if (oldWorkspace.Name != "default")
 		{
-			Name = name,
-			Expression = Workspace.Expression,
-			Variables = Workspace.Variables
-		};
+			await DeleteAsync(oldWorkspace.Name, cancellationToken);
+		}
 
-		await DeleteAsync(oldName, cancellationToken);
+		await CreateWorkspaceAsync(
+			name,
+			oldWorkspace.Expression,
+			oldWorkspace.Variables,
+			cancellationToken
+		);
+	}
 
-		await UpdateLocalStorageAsync(cancellationToken);
+	public void Subscribe(NotificationType notificationType, Action<WorkspaceNotification> callback)
+	{
+		if (!_callbacks.TryGetValue(notificationType, out var callbacks))
+		{
+			callbacks = [];
+			_callbacks.Add(notificationType, callbacks);
+		}
+
+		callbacks.Add(callback);
+	}
+
+	public Task NotifyAsync(WorkspaceNotification notification, CancellationToken cancellationToken)
+	{
+		if (_callbacks.TryGetValue(notification.Type, out var callbacks))
+		{
+			foreach (var callback in callbacks)
+			{
+				callback(notification);
+			}
+		}
+
+		return Task.CompletedTask;
 	}
 }
