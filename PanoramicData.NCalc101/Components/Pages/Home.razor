@@ -7,85 +7,116 @@
 <div class="row">
 	<div class="col-12 d-none d-lg-block">
 		<PDToolbar>
-			<h3 style="white-space: nowrap"><i class="fa-solid fa-desktop" /> Workspace</h3>
+			<PDToolbarDropdown Text=" Workspace"
+							   IconCssClass="fa fa-desktop"
+							   CssClass="btn btn-primary"
+							   IsEnabled="true"
+							   Click="@(async x => await SelectWorkspaceDropdownActionAsync(x))"
+							   >
+				<PDMenuItem Text="Create"
+							IconCssClass="fa-solid fa-plus" />
+				<PDMenuItem Text="Export"
+							IconCssClass="fa-solid fa-download" />
+				<PDMenuItem Text="Import"
+							IconCssClass="fa-solid fa-upload" />
+				<PDMenuItem IsSeparator="true" />
+				<PDMenuItem Text="Delete"
+							IconCssClass="fa-solid fa-trash" />
+			</PDToolbarDropdown>
+			<PDToolbarDropdown Text=" Variable"
+							   IconCssClass="fa fa-circle-dot"
+							   CssClass="btn btn-success"
+							   IsEnabled="true"
+							   Click="@(async x => await VariableDropdownItemSelectedAsync(x))">
+				<PDMenuItem Text="String"
+							IconCssClass="fa-solid fa-a" />
+				<PDMenuItem Text="Integer"
+							IconCssClass="fa-solid fa-1" />
+				<PDMenuItem Text="Double"
+							IconCssClass="fa-solid fa-temperature-half" />
+				<PDMenuItem Text="Boolean"
+							IconCssClass="fa-solid fa-toggle-on" />
+				<PDMenuItem Text="DateTime"
+							IconCssClass="fa-solid fa-clock" />
+				<PDMenuItem Text="DateTimeOffset"
+							IconCssClass="fa-regular fa-clock" />
+				<PDMenuItem Text="Expression"
+							IconCssClass="fa-solid fa-calculator" />
+				<PDMenuItem IsSeparator="true" />
+				<PDMenuItem Text="Delete"
+							IconCssClass="fa-solid fa-trash" />
+			</PDToolbarDropdown>
+
 			<PDToolbarTextbox Value="@WorkspaceService.Workspace.Name"
 							  ValueChanged="NameChangedAsync"
 							  Width="100%"
-							  ShowClearButton="false"
-							  />
+							  ShiftRight="true"
+							  ShowClearButton="false" />
 
-			<PDToolbarButton Text=" Add"
-							 IconCssClass="fa-solid fa-plus"
-							 CssClass="btn btn-success"
-							 ShiftRight="true"
-							 Click="CreateWorkspaceAsync" />
-
-			<PDToolbarButton Text=" Export"
-							 IconCssClass="fa-solid fa-download"
-							 CssClass="btn btn-info"
-							 ShiftRight="true"
-							 Click="ExportWorkspaceAsync" />
-
-			<PDToolbarButton Text=" Import"
-							 IconCssClass="fa-solid fa-upload"
-							 CssClass="btn btn-info"
-							 ShiftRight="true"
-							 Click="ImportWorkspace" />
-
-			@if (_showInputFile)
-			{
-				<InputFile @ref="_inputFile" OnChange="UploadWorkspaceAsync" />
-			}
-
-			<PDToolbarButton Text=" Delete"
-							 IsEnabled="@(WorkspaceService.Workspace.Name != "default")"
-							 IconCssClass="fa-solid fa-trash"
-							 ShiftRight="true"
-							 CssClass="btn btn-danger"
-							 Click="DeleteWorkspaceAsync" />
 		</PDToolbar>
 	</div>
 	<div class="col-12 d-block d-lg-none">
 		<PDToolbar>
-			<h3><i class="fa-solid fa-desktop" /></h3>
+			<PDToolbarDropdown Text=""
+							   IconCssClass="fa fa-desktop"
+							   CssClass="btn btn-primary"
+							   IsEnabled="true"
+							   Click="@(async x => await SelectWorkspaceDropdownActionAsync(x))">
+				<PDMenuItem Text="Create"
+							IconCssClass="fa-solid fa-plus" />
+				<PDMenuItem Text="Export"
+							IconCssClass="fa-solid fa-download" />
+				<PDMenuItem Text="Import"
+							IconCssClass="fa-solid fa-upload" />
+				<PDMenuItem IsSeparator="true" />
+				<PDMenuItem Text="Delete"
+							IconCssClass="fa-solid fa-trash" />
+			</PDToolbarDropdown>
+			<PDToolbarDropdown Text=""
+							   IconCssClass="fa fa-circle-dot"
+							   CssClass="btn btn-success"
+							   IsEnabled="true"
+							   Click="@(async x => await VariableDropdownItemSelectedAsync(x))">
+				<PDMenuItem Text="String"
+							IconCssClass="fa-solid fa-a" />
+				<PDMenuItem Text="Integer"
+							IconCssClass="fa-solid fa-1" />
+				<PDMenuItem Text="Double"
+							IconCssClass="fa-solid fa-temperature-half" />
+				<PDMenuItem Text="Boolean"
+							IconCssClass="fa-solid fa-toggle-on" />
+				<PDMenuItem Text="DateTime"
+							IconCssClass="fa-solid fa-clock" />
+				<PDMenuItem Text="DateTimeOffset"
+							IconCssClass="fa-regular fa-clock" />
+				<PDMenuItem Text="Expression"
+							IconCssClass="fa-solid fa-calculator" />
+				<PDMenuItem IsSeparator="true" />
+				<PDMenuItem Text="Delete"
+							IconCssClass="fa-solid fa-trash" />
+			</PDToolbarDropdown>
+
 			<PDToolbarTextbox Value="@WorkspaceService.Workspace.Name"
 							  ValueChanged="NameChangedAsync"
 							  Width="100%"
+							  ShiftRight="true"
 							  ShowClearButton="false" />
 
-			<PDToolbarButton Text=""
-							 IconCssClass="fa-solid fa-plus"
-							 CssClass="btn btn-success"
-							 ShiftRight="true"
-							 Click="CreateWorkspaceAsync" />
-
-			<PDToolbarButton Text=""
-							 IconCssClass="fa-solid fa-download"
-							 CssClass="btn btn-info"
-							 ShiftRight="true"
-							 Click="ExportWorkspaceAsync" />
-
-			<PDToolbarButton Text=""
-							 IconCssClass="fa-solid fa-upload"
-							 CssClass="btn btn-info"
-							 ShiftRight="true"
-							 Click="ImportWorkspace" />
-
-			<PDToolbarButton Text=""
-							 IsEnabled="@(WorkspaceService.Workspace.Name != "default")"
-							 IconCssClass="fa-solid fa-trash"
-							 CssClass="btn btn-danger"
-							 ShiftRight="true"
-							 Click="DeleteWorkspaceAsync" />
 		</PDToolbar>
 	</div>
 </div>
 
 @if (_showInputFile)
 {
-<div class="row d-block d-lg-none">
+<div class="row">
 	<div class="col-12">
-		<InputFile @ref="_inputFile" OnChange="UploadWorkspaceAsync" />
+		<PDToolbar>
+			<InputFile @ref="_inputFile" OnChange="UploadWorkspaceAsync" />
+			<PDButton Text=""
+					  IconCssClass="fa-solid fa-x"
+					  CssClass="btn btn-danger"
+					  Click="@(() => _showInputFile = false)" />
+		</PDToolbar>
 	</div>
 </div>
 }
@@ -125,50 +156,10 @@
 						CssClass="result d-none d-lg-block"
 						IsReadOnly="true" />
 			<PDTextArea @bind-Value="_exceptionMessage"
-						Rows="5"
+						Rows="4"
 						CssClass="result d-block d-lg-none"
 						IsReadOnly="true" />
 		}
-	</div>
-</div>
-<div class="row mt-3">
-	<div class="col-12 d-none d-lg-block">
-		<PDToolbar>
-			<h3 style="white-space: nowrap"><i class="fa-solid fa-list" /> Variables</h3>
-			<PDToolbarDropdown Text=" Variable"
-							   IconCssClass="fa fa-plus"
-							   CssClass="btn btn-success"
-							   IsEnabled="true"
-							   Click="@(async x => await AddVariableAsync(x))"
-							   ShiftRight="true"
-							   Items="_addVariableMenuItems" />
-
-			<PDToolbarButton Text=" Variable(s)"
-							 IsEnabled="VariablesSelected"
-							 IconCssClass="fa-solid fa-trash"
-							 CssClass="btn btn-danger"
-							 ShiftRight="true"
-							 Click="DeleteRowAsync" />
-		</PDToolbar>
-	</div>
-	<div class="col-12 d-block d-lg-none">
-		<PDToolbar>
-			<h3 style="white-space: nowrap;"><i class="fa-solid fa-list" /> Variables</h3>
-			<PDToolbarDropdown Text=""
-							   IconCssClass="fa fa-plus"
-							   CssClass="btn btn-success"
-							   IsEnabled="true"
-							   Click="@(async x => await AddVariableAsync(x))"
-							   ShiftRight="true"
-							   Items="_addVariableMenuItems" />
-
-			<PDToolbarButton Text=""
-							 IsEnabled="VariablesSelected"
-							 IconCssClass="fa-solid fa-trash"
-							 CssClass="btn btn-danger"
-							 ShiftRight="true"
-							 Click="DeleteRowAsync" />
-		</PDToolbar>
 	</div>
 </div>
 <div class="row mt-3">
@@ -184,7 +175,9 @@
 				 KeyField="v => v.Id"
 				 SelectionMode="TableSelectionMode.Multiple"
 				 ExceptionHandler="TableExceptionHandler"
-				 SelectionChanged="VariableSelectionChanged" >
+				 SelectionChanged="VariableSelectionChanged"
+				 SortCriteria="_sortCriteria"
+			>
 			<PDColumn TItem="Variable"
 					  Id="Type"
 					  Title="Type">

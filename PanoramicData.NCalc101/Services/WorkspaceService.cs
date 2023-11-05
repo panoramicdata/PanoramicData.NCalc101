@@ -71,7 +71,9 @@ public class WorkspaceService(
 	{
 		if (name == "default")
 		{
-			throw new ArgumentOutOfRangeException(nameof(name), "Cannot delete default workspace.");
+			// Cannot delete the default workspace.
+			// Silently fail.
+			return;
 		}
 
 		try
@@ -195,7 +197,29 @@ public class WorkspaceService(
 	}
 
 	public Task<DataResponse<Variable>> GetDataAsync(DataRequest<Variable> request, CancellationToken cancellationToken)
-		=> Task.FromResult(new DataResponse<Variable>(Workspace.Variables, Workspace.Variables.Count));
+	{
+		var variablesQueryable = Workspace.Variables.AsQueryable();
+
+		if (!string.IsNullOrWhiteSpace(request.SearchText))
+		{
+			var searchText = request.SearchText.ToLowerInvariant();
+			variablesQueryable = variablesQueryable.Where(v => v.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase));
+		}
+
+		if (request.SortFieldExpression != null)
+		{
+			if (request.SortDirection != null && request.SortDirection == SortDirection.Descending)
+			{
+				variablesQueryable = variablesQueryable.OrderByDescending(request.SortFieldExpression);
+			}
+			else
+			{
+				variablesQueryable = variablesQueryable.OrderBy(request.SortFieldExpression);
+			}
+		}
+
+		return Task.FromResult(new DataResponse<Variable>(variablesQueryable.ToList(), Workspace.Variables.Count));
+	}
 
 	public async Task<OperationResponse> UpdateAsync(Variable item, IDictionary<string, object?> delta, CancellationToken cancellationToken)
 	{

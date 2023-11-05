@@ -40,15 +40,7 @@ public partial class Home
 	private string _resultType = string.Empty;
 	private string _exceptionMessage = string.Empty;
 	private string _exceptionType = string.Empty;
-	private readonly List<MenuItem> _addVariableMenuItems = [
-		new MenuItem { Text = "String", IconCssClass = "fa-fw fa-solid fa-a" },
-		new MenuItem { Text = "Integer", IconCssClass = "fa-fw fa-solid fa-1" },
-		new MenuItem { Text = "Double", IconCssClass = "fa-fw fa-solid fa-temperature-half" },
-		new MenuItem { Text = "Boolean", IconCssClass = "fa-fw fa-solid fa-toggle-on" },
-		new MenuItem { Text = "DateTime", IconCssClass = "fa-fw fa-solid fa-clock" },
-		new MenuItem { Text = "DateTimeOffset", IconCssClass = "fa-fw fa-regular fa-clock" },
-		new MenuItem { Text = "Expression", IconCssClass = "fa-fw fa-solid fa-calculator" },
-	];
+	private readonly SortCriteria _sortCriteria = new(nameof(Variable.Name), SortDirection.Ascending);
 	private readonly static JsonSerializerOptions DefaultJsonSerializerOptions = new()
 	{
 		WriteIndented = true
@@ -66,6 +58,7 @@ public partial class Home
 				await _table!.RefreshAsync();
 				_expression = WorkspaceService.Workspace.Expression ?? string.Empty;
 				_expression2 = WorkspaceService.Workspace.Expression ?? string.Empty;
+				//_enableWorkspaceDelete = WorkspaceService.Workspace.Name != "default";
 				await EvaluateAsync();
 				StateHasChanged();
 			}
@@ -87,6 +80,25 @@ public partial class Home
 		await WorkspaceService.SelectAsync(WorkspaceName, default);
 	}
 
+	private async Task SelectWorkspaceDropdownActionAsync(string menuItemText)
+	{
+		switch (menuItemText)
+		{
+			case "Create":
+				await CreateWorkspaceAsync();
+				break;
+			case "Import":
+				ImportWorkspace();
+				break;
+			case "Export":
+				await ExportWorkspaceAsync();
+				break;
+			case "Delete":
+				await DeleteWorkspaceAsync();
+				break;
+		}
+	}
+
 	private async Task VariableEditCommitedAsync()
 	{
 		await _table!.RefreshAsync();
@@ -101,7 +113,7 @@ public partial class Home
 		await WorkspaceService.RenameAsync(newName, default);
 	}
 
-	private async Task AddVariableAsync(string value)
+	private async Task VariableDropdownItemSelectedAsync(string value)
 	{
 		switch (value)
 		{
@@ -134,6 +146,9 @@ public partial class Home
 				break;
 			case "Expression":
 				await AddVariableAsync<ExtendedExpression>();
+				break;
+			case "Delete":
+				await DeleteSelectedVariablesAsync();
 				break;
 			default:
 				throw new InvalidOperationException($"Unsupported type: {value}");
@@ -228,7 +243,7 @@ public partial class Home
 		await WorkspaceService!.CreateWorkspaceAsync(newName, "1 + 1", [], default);
 	}
 
-	private async Task DeleteRowAsync()
+	private async Task DeleteSelectedVariablesAsync()
 	{
 		var rowIds = _table!.Selection;
 		if (rowIds is null || rowIds.Count == 0)
@@ -255,10 +270,9 @@ public partial class Home
 
 	private void VariableSelectionChanged()
 	{
+		//_enableVariableDelete = _table!.Selection?.Count is not null and > 0;
 		StateHasChanged();
 	}
-
-	private bool VariablesSelected => _table!.Selection!.Count > 0;
 
 	private async Task<string> GetUnusedVariableNameAsync()
 	{
@@ -283,15 +297,7 @@ public partial class Home
 	private async Task OnExpressionChangedAsync(string expression)
 	{
 		await WorkspaceService.SetExpressionAsync(expression, default);
-		if (_expression != expression)
-		{
-			_expression = expression;
-		}
-
-		if (_expression2 != expression)
-		{
-			_expression2 = expression;
-		}
+		_expression = _expression2 = expression;
 
 		await EvaluateAsync();
 	}
