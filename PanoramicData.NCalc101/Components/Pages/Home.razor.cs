@@ -126,28 +126,19 @@ public partial class Home
 			case "Double":
 				await AddVariableAsync<double>();
 				break;
+			case "Boolean":
+				await AddVariableAsync<bool>();
+				break;
 			case "DateTime":
 				await AddVariableAsync<DateTime>();
 				break;
 			case "DateTimeOffset":
 				await AddVariableAsync<DateTimeOffset>();
 				break;
-			case "Boolean":
-				await AddVariableAsync<bool>();
-				break;
-			case "TimeSpan":
-				await AddVariableAsync<TimeSpan>();
-				break;
-			case "Guid":
-				await AddVariableAsync<Guid>();
-				break;
-			case "null":
-				await AddVariableAsync<object?>();
-				break;
 			case "Expression":
 				await AddVariableAsync<ExtendedExpression>();
 				break;
-			case "Delete":
+			case "Delete selected":
 				await DeleteSelectedVariablesAsync();
 				break;
 			default:

@@ -13,46 +13,41 @@
 							   IsEnabled="true"
 							   Click="@(async x => await SelectWorkspaceDropdownActionAsync(x))"
 							   >
-				<PDMenuItem Text="Workspaces Menu"
-							IsDisabled ="true"
-							IconCssClass="fa-solid fa-desktop" />
-				<PDMenuItem IsSeparator="true" />
 				<PDMenuItem Text="Create"
-							IconCssClass="fa-solid fa-plus" />
+							IconCssClass="fa-fw fa-solid fa-plus" />
 				<PDMenuItem Text="Export"
-							IconCssClass="fa-solid fa-download" />
+							IconCssClass="fa-fw fa-solid fa-download" />
 				<PDMenuItem Text="Import"
-							IconCssClass="fa-solid fa-upload" />
+							IconCssClass="fa-fw fa-solid fa-upload" />
 				<PDMenuItem IsSeparator="true" />
 				<PDMenuItem Text="Delete"
-							IconCssClass="fa-solid fa-trash" />
+							IconCssClass="fa-fw fa-solid fa-trash" />
 			</PDToolbarDropdown>
 			<PDToolbarDropdown Text=" Variables"
 							   IconCssClass="fa fa-circle-dot"
 							   CssClass="btn btn-success"
 							   IsEnabled="true"
 							   Click="@(async x => await VariableDropdownItemSelectedAsync(x))">
-				<PDMenuItem Text="Variables Menu"
+				<PDMenuItem Text="Create"
 							IsDisabled="true"
-							IconCssClass="fa-solid fa-circle-dot" />
-				<PDMenuItem IsSeparator="true" />
+							IconCssClass="fa-fw fa-solid fa-plus" />
 				<PDMenuItem Text="String"
-							IconCssClass="fa-solid fa-a" />
+							IconCssClass="fa-fw fa-solid fa-a" />
 				<PDMenuItem Text="Integer"
-							IconCssClass="fa-solid fa-1" />
+							IconCssClass="fa-fw fa-solid fa-1" />
 				<PDMenuItem Text="Double"
-							IconCssClass="fa-solid fa-temperature-half" />
+							IconCssClass="fa-fw fa-solid fa-temperature-half" />
 				<PDMenuItem Text="Boolean"
-							IconCssClass="fa-solid fa-toggle-on" />
+							IconCssClass="fa-fw fa-solid fa-toggle-on" />
 				<PDMenuItem Text="DateTime"
-							IconCssClass="fa-solid fa-clock" />
+							IconCssClass="fa-fw fa-solid fa-clock" />
 				<PDMenuItem Text="DateTimeOffset"
-							IconCssClass="fa-regular fa-clock" />
+							IconCssClass="fa-fw fa-regular fa-clock" />
 				<PDMenuItem Text="Expression"
-							IconCssClass="fa-solid fa-calculator" />
+							IconCssClass="fa-fw fa-solid fa-calculator" />
 				<PDMenuItem IsSeparator="true" />
-				<PDMenuItem Text="Delete"
-							IconCssClass="fa-solid fa-trash" />
+				<PDMenuItem Text="Delete selected"
+							IconCssClass="fa-fw fa-solid fa-trash" />
 			</PDToolbarDropdown>
 
 			<PDToolbarTextbox Value="@WorkspaceService.Workspace.Name"
@@ -70,6 +65,10 @@
 							   CssClass="btn btn-primary"
 							   IsEnabled="true"
 							   Click="@(async x => await SelectWorkspaceDropdownActionAsync(x))">
+				<PDMenuItem Text="Workspaces Menu"
+							IsDisabled="true"
+							IconCssClass="fa-solid fa-desktop" />
+				<PDMenuItem IsSeparator="true" />
 				<PDMenuItem Text="Create"
 							IconCssClass="fa-solid fa-plus" />
 				<PDMenuItem Text="Export"
@@ -85,23 +84,30 @@
 							   CssClass="btn btn-success"
 							   IsEnabled="true"
 							   Click="@(async x => await VariableDropdownItemSelectedAsync(x))">
-				<PDMenuItem Text="String"
-							IconCssClass="fa-solid fa-a" />
-				<PDMenuItem Text="Integer"
-							IconCssClass="fa-solid fa-1" />
-				<PDMenuItem Text="Double"
-							IconCssClass="fa-solid fa-temperature-half" />
-				<PDMenuItem Text="Boolean"
-							IconCssClass="fa-solid fa-toggle-on" />
-				<PDMenuItem Text="DateTime"
-							IconCssClass="fa-solid fa-clock" />
-				<PDMenuItem Text="DateTimeOffset"
-							IconCssClass="fa-regular fa-clock" />
-				<PDMenuItem Text="Expression"
-							IconCssClass="fa-solid fa-calculator" />
+				<PDMenuItem Text="Variables Menu"
+							IsDisabled="true"
+							IconCssClass="fa-solid fa-circle-dot" />
 				<PDMenuItem IsSeparator="true" />
-				<PDMenuItem Text="Delete"
-							IconCssClass="fa-solid fa-trash" />
+				<PDMenuItem Text="Create"
+							IsDisabled="true"
+							IconCssClass="fa-fw fa-solid fa-plus" />
+				<PDMenuItem Text="String"
+							IconCssClass="fa-fw fa-solid fa-a" />
+				<PDMenuItem Text="Integer"
+							IconCssClass="fa-fw fa-solid fa-1" />
+				<PDMenuItem Text="Double"
+							IconCssClass="fa-fw fa-solid fa-temperature-half" />
+				<PDMenuItem Text="Boolean"
+							IconCssClass="fa-fw fa-solid fa-toggle-on" />
+				<PDMenuItem Text="DateTime"
+							IconCssClass="fa-fw fa-solid fa-clock" />
+				<PDMenuItem Text="DateTimeOffset"
+							IconCssClass="fa-fw fa-regular fa-clock" />
+				<PDMenuItem Text="Expression"
+							IconCssClass="fa-fw fa-solid fa-calculator" />
+				<PDMenuItem IsSeparator="true" />
+				<PDMenuItem Text="Delete selected"
+							IconCssClass="fa-fw fa-solid fa-trash" />
 			</PDToolbarDropdown>
 
 			<PDToolbarTextbox Value="@WorkspaceService.Workspace.Name"
