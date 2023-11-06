@@ -13,6 +13,10 @@
 							   IsEnabled="true"
 							   Click="@(async x => await SelectWorkspaceDropdownActionAsync(x))"
 							   >
+				<PDMenuItem Text="Workspaces Menu"
+							IsDisabled ="true"
+							IconCssClass="fa-solid fa-desktop" />
+				<PDMenuItem IsSeparator="true" />
 				<PDMenuItem Text="Create"
 							IconCssClass="fa-solid fa-plus" />
 				<PDMenuItem Text="Export"
@@ -23,11 +27,15 @@
 				<PDMenuItem Text="Delete"
 							IconCssClass="fa-solid fa-trash" />
 			</PDToolbarDropdown>
-			<PDToolbarDropdown Text=" Variable"
+			<PDToolbarDropdown Text=" Variables"
 							   IconCssClass="fa fa-circle-dot"
 							   CssClass="btn btn-success"
 							   IsEnabled="true"
 							   Click="@(async x => await VariableDropdownItemSelectedAsync(x))">
+				<PDMenuItem Text="Variables Menu"
+							IsDisabled="true"
+							IconCssClass="fa-solid fa-circle-dot" />
+				<PDMenuItem IsSeparator="true" />
 				<PDMenuItem Text="String"
 							IconCssClass="fa-solid fa-a" />
 				<PDMenuItem Text="Integer"
