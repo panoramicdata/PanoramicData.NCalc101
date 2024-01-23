@@ -312,8 +312,18 @@ public partial class Home
 			if (inputSet is null)
 			{
 				var output = expression.Evaluate();
-				_result = output?.ToString() ?? string.Empty;
-				_resultType = output is null ? "null" : output.GetType().ToString();
+				_result = output switch
+				{
+					null => "null",
+					List<string> => string.Join("\r\n", output as List<string> ?? []),
+					_ => output.ToString()
+				} ?? string.Empty;
+				_resultType = output switch
+				{
+					null => "null",
+					List<string> => "List<string>",
+					_ => output.GetType().ToString()
+				};
 			}
 			else
 			{
