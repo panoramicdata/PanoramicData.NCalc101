@@ -304,15 +304,76 @@ public partial class Home
 				expression.Parameters[variable.Name] = variable.GetValue();
 			}
 
-			var output = expression.Evaluate();
-			_result = output?.ToString() ?? string.Empty;
-			_resultType = output is null ? "null" : output.GetType().ToString();
+			var inputSet = variables.Items.SingleOrDefault(variables => variables.Name == "inputSet");
+
 			_exceptionMessage = string.Empty;
 			_exceptionType = string.Empty;
+
+			if (inputSet is null)
+			{
+				var output = expression.Evaluate();
+				_result = output?.ToString() ?? string.Empty;
+				_resultType = output is null ? "null" : output.GetType().ToString();
+			}
+			else
+			{
+				switch (inputSet.Type.ToString())
+				{
+					case "PanoramicData.NCalcExtensions.ExtendedExpression":
+						var inputExpression = new ExtendedExpression(inputSet.Value);
+						foreach (var variable in variables.Items)
+						{
+							inputExpression.Parameters[variable.Name] = variable.GetValue();
+						}
+
+						var inputExpressionResult = inputExpression.Evaluate();
+						var inputExpressionResultType = inputExpressionResult.GetType();
+						var inputSetValues = new List<object?>();
+						var outputSetValues = new List<object?>();
+
+						if (inputExpressionResultType is IList<object?> x)
+						{
+							foreach (var item in x)
+							{
+								inputSetValues.Add(item);
+							}
+
+							expression.Parameters["input"] = inputSetValues;
+						}
+						else if (inputExpressionResultType is IList<string> y)
+						{
+							foreach (var item in y)
+							{
+								inputSetValues.Add(item);
+							}
+
+							expression.Parameters["input"] = inputSetValues;
+						}
+						else
+						{
+							throw new InvalidOperationException($"Unsupported inputSet type after evaluation: {inputExpressionResultType}");
+						}
+
+						_resultType = "Result Set";
+						foreach (var inputSetValue in inputSetValues)
+						{
+							expression.Parameters["InputSetValue"] = inputSetValue;
+							var output = expression.Evaluate();
+							outputSetValues.Add(output);
+						}
+
+						_result = string.Join("\r\n", outputSetValues.Select(x => $"{x?.GetType().ToString() ?? "null"} : {x}"));
+
+						break;
+					default:
+						throw new InvalidOperationException($"Unsupported inputSet type: {inputSet.Type}");
+				}
+			}
 		}
 		catch (Exception ex)
 		{
 			_result = string.Empty;
+			_resultType = string.Empty;
 			_exceptionMessage = ex.Message;
 			_exceptionType = ex.GetType().ToString();
 		}
