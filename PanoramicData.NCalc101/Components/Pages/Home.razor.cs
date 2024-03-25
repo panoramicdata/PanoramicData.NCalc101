@@ -315,6 +315,7 @@ public partial class Home
 				_result = output switch
 				{
 					null => "null",
+					List<object?> => string.Join("\r\n", (output as List<object?>)!.Select(ob => ob?.ToString() ?? "null")),
 					List<string> => string.Join("\r\n", output as List<string> ?? []),
 					_ => output.ToString()
 				} ?? string.Empty;
@@ -322,6 +323,7 @@ public partial class Home
 				{
 					null => "null",
 					List<string> => "List<string>",
+					List<object?> => "List<object?>",
 					_ => output.GetType().ToString()
 				};
 			}

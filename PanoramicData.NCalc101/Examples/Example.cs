@@ -55,7 +55,11 @@ public record Example
 
 			_result = expression.Evaluate();
 			_resultTypeString = _result is null ? "null" : _result.GetType().ToString();
-			_resultAsString = _result?.ToString() ?? string.Empty;
+			_resultAsString = _resultTypeString switch
+			{
+				"System.Collections.Generic.List`1[System.Object]" => string.Join("\n", (_result as List<object?>)!.Select(ob => ob?.ToString() ?? "null")),
+				_ => _result?.ToString() ?? "null"
+			};
 		}
 		catch (Exception ex)
 		{
