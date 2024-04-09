@@ -12,6 +12,7 @@ public class MagicSuiteConfigProvider : IMagicSuiteConfigProvider
 
 	public ValueTask<NavMenuItems> GetMenuItemsAsync(
 		IMagicSuiteService magicSuiteService,
+		ILogger<IMagicSuiteConfigProvider> logger,
 		CancellationToken cancellationToken)
 	{
 		var menuItems = new NavMenuItems();

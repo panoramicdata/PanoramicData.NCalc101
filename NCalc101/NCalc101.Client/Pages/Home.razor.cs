@@ -1,11 +1,13 @@
+using PanoramicData.ReportMagic.Data;
+
 namespace NCalc101.Client.Pages;
 
 public partial class Home
 {
-	private MagicSuiteUserInfo? _magicSuiteUserInfo;
+	private Person? _person;
 
 	[Inject] private IMagicSuiteService MagicSuiteService { get; set; } = null!;
 
 	protected override async Task OnInitializedAsync()
-		=> _magicSuiteUserInfo = await MagicSuiteService.GetUserInfoAsync();
+		=> _person = await MagicSuiteService.GetUserInfoAsync(default);
 }
