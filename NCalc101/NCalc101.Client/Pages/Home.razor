@@ -1,0 +1,22 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Components.Authorization
+
+<PageTitle>Home</PageTitle>
+
+<h1>MagicSuite example app</h1>
+
+<AuthorizeView>
+	<Authorized>
+		<div>Welcome @_magicSuiteUserInfo?.FullName</div>
+		<ul>
+			<li>User Id: @_magicSuiteUserInfo?.UserId</li>
+			<li>Name: @_magicSuiteUserInfo?.FullName</li>
+			<li>Email: @_magicSuiteUserInfo?.Email</li>
+			<li>TenantAdmin: @_magicSuiteUserInfo?.IsTenantAdmin</li>
+			<li>SuperAdmin: @_magicSuiteUserInfo?.IsSuperAdmin</li>
+		</ul>
+	</Authorized>
+	<NotAuthorized>
+		<div>You are not logged in</div>
+	</NotAuthorized>
+</AuthorizeView>

@@ -1,0 +1,17 @@
+<Project>
+  <ItemGroup>
+	<PackageReference Include="Nerdbank.GitVersioning" Version="3.6.133">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+  </ItemGroup>
+
+  <PropertyGroup>
+	<Authors>Panoramic Data Limited</Authors>
+	<Copyright>Copyright © Panoramic Data Limited 2024</Copyright>
+	<LangVersion>latest</LangVersion>
+	<Nullable>enable</Nullable>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<AnalysisLevel>latest-recommended</AnalysisLevel>
+  </PropertyGroup>
+</Project>
