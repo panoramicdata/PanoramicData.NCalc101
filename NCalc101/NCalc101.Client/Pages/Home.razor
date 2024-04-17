@@ -7,14 +7,7 @@
 
 <AuthorizeView>
 	<Authorized>
-		<div>Welcome @_person?.Name</div>
-		<ul>
-			<li>User Id: @_person?.Id</li>
-			<li>Name: @_person?.Name</li>
-			<li>Username: @_person?.UserName</li>
-			<li>TenantAdmin: @_person?.IsTenantAdministrator</li>
-			<li>SuperAdmin: @_person?.IsSuperAdmin</li>
-		</ul>
+		<div>You are logged in</div>
 	</Authorized>
 	<NotAuthorized>
 		<div>You are not logged in</div>

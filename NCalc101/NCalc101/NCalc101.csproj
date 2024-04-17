@@ -9,8 +9,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NCalc101.Client\NCalc101.Client.csproj" />
-    <PackageReference Include="MagicSuite.Framework.Server" Version="1.0.175" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.3" />
+    <PackageReference Include="MagicSuite.Framework.Server" Version="1.0.207" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.4" />
   </ItemGroup>
 
 </Project>
