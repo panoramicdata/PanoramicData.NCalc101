@@ -312,13 +312,7 @@ public partial class Home
 			if (inputSet is null)
 			{
 				var output = expression.Evaluate();
-				_result = output switch
-				{
-					null => "null",
-					List<object?> => string.Join("\r\n", (output as List<object?>)!.Select(ob => ob?.ToString() ?? "null")),
-					List<string> => string.Join("\r\n", output as List<string> ?? []),
-					_ => output.ToString()
-				} ?? string.Empty;
+				_result = GetString(output);
 				_resultType = output switch
 				{
 					null => "null",
@@ -389,6 +383,17 @@ public partial class Home
 			_exceptionMessage = ex.Message;
 			_exceptionType = ex.GetType().ToString();
 		}
+	}
+
+	private static string GetString(object? output, bool isTopLevel = true)
+	{
+		return output switch
+		{
+			null => "null",
+			IEnumerable<string> => string.Join(isTopLevel ? "\r\n" : " ", output as IEnumerable<string> ?? []),
+			IEnumerable<object?> => string.Join(isTopLevel ? "\r\n" : " ", (output as IEnumerable<object?>)!.Select(ob => GetString(ob, false) ?? "null")),
+			_ => output.ToString()
+		} ?? string.Empty;
 	}
 
 	private static string TidyExpression(string expression)
