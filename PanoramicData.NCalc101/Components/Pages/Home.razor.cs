@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PanoramicData.Blazor;
 using PanoramicData.Blazor.Models;
 using PanoramicData.NCalc101.Interfaces;
@@ -165,7 +167,7 @@ public partial class Home
 
 	private async Task ExportWorkspaceAsync()
 	{
-		var workspaceAsJson = JsonSerializer
+		var workspaceAsJson = System.Text.Json.JsonSerializer
 			.Serialize(
 				WorkspaceService.Workspace,
 				DefaultJsonSerializerOptions
@@ -194,7 +196,7 @@ public partial class Home
 			await using MemoryStream memoryStream = new();
 			await browserFile.OpenReadStream().CopyToAsync(memoryStream);
 			memoryStream.Position = 0;
-			var workspace = await JsonSerializer.DeserializeAsync<Workspace>(memoryStream, DefaultJsonSerializerOptions);
+			var workspace = await System.Text.Json.JsonSerializer.DeserializeAsync<Workspace>(memoryStream, DefaultJsonSerializerOptions);
 			if (workspace is null)
 			{
 				ToastService.Error($"Workspace {fileIndex} failed to deserialize.  Skipping.", "Upload Error");
@@ -390,6 +392,8 @@ public partial class Home
 		return output switch
 		{
 			null => "null",
+			JObject jObject => JsonConvert.SerializeObject(jObject, Formatting.Indented),
+			JArray jArray => JsonConvert.SerializeObject(jArray, Formatting.Indented),
 			IEnumerable<string> => string.Join(isTopLevel ? "\r\n" : " ", output as IEnumerable<string> ?? []),
 			IEnumerable<object?> => string.Join(isTopLevel ? "\r\n" : " ", (output as IEnumerable<object?>)!.Select(ob => GetString(ob, false) ?? "null")),
 			_ => output.ToString()
