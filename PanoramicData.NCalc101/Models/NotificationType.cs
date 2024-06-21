@@ -1,9 +1,8 @@
-﻿namespace PanoramicData.NCalc101.Models
+﻿namespace PanoramicData.NCalc101.Models;
+
+public enum NotificationType
 {
-	public enum NotificationType
-	{
-		WorkspaceListUpdated,
-		CurrentWorkspaceUpdated,
-		VariablesUpdated
-	}
+	WorkspaceListUpdated,
+	CurrentWorkspaceUpdated,
+	VariablesUpdated
 }

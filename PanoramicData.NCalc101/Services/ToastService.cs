@@ -20,10 +20,10 @@ public class ToastService(IToaster toaster) : IToastService
 		string message,
 		string? title = null,
 		bool allowHtml = false,
-		ToastServiceCloseBehavior closeBehavior = ToastServiceCloseBehavior.CloseAutomatically)
+		ToastServiceCloseBehavior closeBehaviour = ToastServiceCloseBehavior.CloseAutomatically)
 		=> _toaster.Info(ShortMessage(message), title, options =>
 			{
-				options.RequireInteraction = closeBehavior == ToastServiceCloseBehavior.CloseAutomatically;
+				options.RequireInteraction = closeBehaviour == ToastServiceCloseBehavior.CloseAutomatically;
 				options.EscapeHtml = !allowHtml;
 				options.VisibleStateDuration = _infoTimeOutSeconds * 1000;
 			}
@@ -33,10 +33,10 @@ public class ToastService(IToaster toaster) : IToastService
 		string message,
 		string? title = null,
 		bool allowHtml = false,
-		ToastServiceCloseBehavior closeBehavior = ToastServiceCloseBehavior.CloseAutomatically)
+		ToastServiceCloseBehavior closeBehaviour = ToastServiceCloseBehavior.CloseAutomatically)
 		=> _toaster.Success(ShortMessage(message), title, options =>
 			{
-				options.RequireInteraction = closeBehavior == ToastServiceCloseBehavior.ManualCloseRequired;
+				options.RequireInteraction = closeBehaviour == ToastServiceCloseBehavior.ManualCloseRequired;
 				options.EscapeHtml = !allowHtml;
 				options.VisibleStateDuration = _infoTimeOutSeconds * 1000;
 			}
@@ -46,10 +46,10 @@ public class ToastService(IToaster toaster) : IToastService
 		string message,
 		string? title = null,
 		bool allowHtml = false,
-		ToastServiceCloseBehavior closeBehavior = ToastServiceCloseBehavior.CloseAutomatically)
+		ToastServiceCloseBehavior closeBehaviour = ToastServiceCloseBehavior.CloseAutomatically)
 		=> _toaster.Warning(ShortMessage(message), title, options =>
 			{
-				options.RequireInteraction = closeBehavior == ToastServiceCloseBehavior.ManualCloseRequired;
+				options.RequireInteraction = closeBehaviour == ToastServiceCloseBehavior.ManualCloseRequired;
 				options.EscapeHtml = !allowHtml;
 				options.VisibleStateDuration = _warningTimeOutSeconds * 1000;
 			}
@@ -59,10 +59,10 @@ public class ToastService(IToaster toaster) : IToastService
 		string message,
 		string? title = null,
 		bool allowHtml = false,
-		ToastServiceCloseBehavior closeBehavior = ToastServiceCloseBehavior.CloseAutomatically)
+		ToastServiceCloseBehavior closeBehaviour = ToastServiceCloseBehavior.CloseAutomatically)
 		=> _toaster.Error(ShortMessage(message), title, options =>
 			{
-				options.RequireInteraction = closeBehavior == ToastServiceCloseBehavior.ManualCloseRequired;
+				options.RequireInteraction = closeBehaviour == ToastServiceCloseBehavior.ManualCloseRequired;
 				options.EscapeHtml = !allowHtml;
 				options.VisibleStateDuration = _errorTimeOutSeconds * 1000;
 			}

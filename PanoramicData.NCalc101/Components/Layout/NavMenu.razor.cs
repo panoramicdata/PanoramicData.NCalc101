@@ -28,7 +28,7 @@ public partial class NavMenu
 			);
 		WorkspaceService!.Subscribe(
 			NotificationType.CurrentWorkspaceUpdated,
-			async notification =>
+			notification =>
 			{
 				if (_currentWorkspaceName == WorkspaceService.Workspace.Name)
 				{
@@ -50,13 +50,9 @@ public partial class NavMenu
 		_workspaceNames.AddRange(newNameList);
 	}
 
-	private async Task ClickAsync(string workspaceName)
-	{
-		await WorkspaceService!.SelectAsync(workspaceName, default);
-	}
+	private Task ClickAsync(string workspaceName)
+		=> WorkspaceService!.SelectAsync(workspaceName, default);
 
-	private async Task DeleteAsync(string workspaceName)
-	{
-		await WorkspaceService!.DeleteAsync(workspaceName, default);
-	}
+	private Task DeleteAsync(string workspaceName)
+		=> WorkspaceService!.DeleteAsync(workspaceName, default);
 }

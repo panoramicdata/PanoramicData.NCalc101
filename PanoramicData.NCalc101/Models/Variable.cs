@@ -1,4 +1,5 @@
 ﻿using PanoramicData.NCalcExtensions;
+using System.Globalization;
 
 namespace PanoramicData.NCalc101.Models;
 
@@ -15,17 +16,17 @@ public class Variable
 	internal object? GetValue() => Type switch
 	{
 		"System.Boolean" => bool.Parse(Value),
-		"System.Byte" => byte.Parse(Value),
+		"System.Byte" => byte.Parse(Value, CultureInfo.InvariantCulture),
 		"System.Char" => char.Parse(Value),
-		"System.DateTime" => DateTime.Parse(Value),
-		"System.DateTimeOffset" => DateTimeOffset.Parse(Value),
-		"System.Decimal" => decimal.Parse(Value),
-		"System.Double" => double.Parse(Value),
-		"System.Single" => float.Parse(Value),
-		"System.Int32" => int.Parse(Value),
-		"System.Int64" => long.Parse(Value),
-		"System.SByte" => sbyte.Parse(Value),
-		"System.Int16" => short.Parse(Value),
+		"System.DateTime" => DateTime.Parse(Value, CultureInfo.InvariantCulture),
+		"System.DateTimeOffset" => DateTimeOffset.Parse(Value, CultureInfo.InvariantCulture),
+		"System.Decimal" => decimal.Parse(Value, CultureInfo.InvariantCulture),
+		"System.Double" => double.Parse(Value, CultureInfo.InvariantCulture),
+		"System.Single" => float.Parse(Value, CultureInfo.InvariantCulture),
+		"System.Int32" => int.Parse(Value, CultureInfo.InvariantCulture),
+		"System.Int64" => long.Parse(Value, CultureInfo.InvariantCulture),
+		"System.SByte" => sbyte.Parse(Value, CultureInfo.InvariantCulture),
+		"System.Int16" => short.Parse(Value, CultureInfo.InvariantCulture),
 		"PanoramicData.NCalcExtensions.ExtendedExpression" => new ExtendedExpression(Value),
 		"System.String" => Value,
 		"null" => null,

@@ -30,8 +30,7 @@ public partial class Home
 	[SupplyParameterFromQuery(Name = "workspace")]
 	private string? WorkspaceName { get; set; }
 
-	private InputFile? _inputFile;
-	private bool _showInputFile = false;
+	private bool _showInputFile;
 	private string _expression = string.Empty;
 	private string _expression2 = string.Empty;
 

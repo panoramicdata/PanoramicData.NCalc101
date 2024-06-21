@@ -7,11 +7,10 @@ namespace PanoramicData.NCalc101.Examples;
 
 public record Example
 {
-	private bool _hasEvaluated = false;
+	private bool _hasEvaluated;
 	private object? _result;
 	private string _resultTypeString = string.Empty;
 	private string _resultAsString = string.Empty;
-	private Exception? _exception;
 
 	public required string Name { get; set; }
 
@@ -63,7 +62,6 @@ public record Example
 		}
 		catch (Exception ex)
 		{
-			_exception = ex;
 			_resultTypeString = ex.GetType().ToString();
 			_resultAsString = $"Exception thrown of type {ex.GetType()} with message: '{ex.Message}'.";
 		}
