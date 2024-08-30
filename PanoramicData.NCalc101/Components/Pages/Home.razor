@@ -4,6 +4,7 @@
 @using PanoramicData.NCalc101.Models
 
 <PageTitle>NCalc 101</PageTitle>
+
 <div class="row">
 	<div class="col-12 d-none d-lg-block">
 		<PDToolbar>
@@ -138,14 +139,9 @@
 	<div class="col-lg-6 mt-3">
 		<h3><i class="fa-solid fa-keyboard" /> Input</h3>
 		<div class="ncalc-input">
-			<PDTextArea Value="@_expression"
-						Rows="10"
-						CssClass="d-none d-lg-block"
-						ValueChanged="OnExpressionChangedAsync" />
-			<PDTextArea Value="@_expression2"
-						Rows="4"
-						CssClass="d-block d-lg-none"
-						ValueChanged="OnExpressionChangedAsync" />
+			<StandaloneCodeEditor @ref="_monacoEditor"
+							      ConstructionOptions="GetMonacoOptions"
+								  OnKeyUp="OnMonacoKeyUpAsync" />
 		</div>
 	</div>
 	<div class="col-lg-6 mt-3">

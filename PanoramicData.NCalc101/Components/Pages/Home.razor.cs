@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using BlazorMonaco.Editor;
+using BlazorMonaco.Languages;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PanoramicData.Blazor;
 using PanoramicData.Blazor.Models;
+using PanoramicData.Blazor.Models.Monaco;
 using PanoramicData.NCalc101.Interfaces;
 using PanoramicData.NCalc101.Models;
 using PanoramicData.NCalcExtensions;
@@ -13,7 +16,7 @@ using System.Text.Json;
 
 namespace PanoramicData.NCalc101.Components.Pages;
 
-public partial class Home
+public partial class Home : IAsyncDisposable
 {
 	[Inject]
 	public NavigationManager NavigationManager { get; set; } = null!;
@@ -30,9 +33,10 @@ public partial class Home
 	[SupplyParameterFromQuery(Name = "workspace")]
 	private string? WorkspaceName { get; set; }
 
+	private const string EDITOR_LANGUAGE = "ncalc";
+
 	private bool _showInputFile;
 	private string _expression = string.Empty;
-	private string _expression2 = string.Empty;
 
 	private readonly string AlphabetLowerCase = new(Enumerable.Range(97, 26).Select(n => (char)n).ToArray());
 
@@ -47,6 +51,101 @@ public partial class Home
 		WriteIndented = true
 	};
 
+	#region IAsyncDisposable
+
+	public async ValueTask DisposeAsync()
+	{
+		try
+		{
+			GC.SuppressFinalize(this);
+			if (_objRef != null)
+			{
+				_objRef.Dispose();
+			}
+			if (_module != null)
+			{
+				await _module.DisposeAsync().ConfigureAwait(true);
+			}
+		}
+		catch
+		{
+		}
+	}
+
+	#endregion
+
+	#region Monaco Editor
+
+	private IJSObjectReference? _module;
+	private StandaloneCodeEditor? _monacoEditor;
+	private DotNetObjectReference<Home>? _objRef;
+	private MethodCache _monacoMethodCache = new();
+
+	[JSInvokable]
+	public CompletionItem[] GetCompletions(BlazorMonaco.Range range)
+	{
+		return _monacoMethodCache.GetCompletionItems(EDITOR_LANGUAGE).ToArray();
+	}
+
+	[JSInvokable]
+	public SignatureInformation[] GetSignatures(string functionName)
+	{
+		return _monacoMethodCache.GetSignatures(EDITOR_LANGUAGE, functionName).ToArray();
+	}
+
+	private StandaloneEditorConstructionOptions GetMonacoOptions(StandaloneCodeEditor editor)
+		=> new()
+		{
+			AutomaticLayout = true,
+			Language = EDITOR_LANGUAGE,
+			Value = _expression
+		};
+
+	private async Task OnMonacoKeyUpAsync(BlazorMonaco.KeyboardEvent evt)
+	{
+		try
+		{
+			if (_monacoEditor != null)
+			{
+				var model = await _monacoEditor.GetModel();
+				var expression = await model.GetValue(EndOfLinePreference.CRLF, true);
+				if (expression != _expression)
+				{
+					await OnExpressionChangedAsync(expression);
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			var a = 1;
+		}
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			if (JS != null)
+			{
+				_objRef = DotNetObjectReference.Create(this);
+				//_module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/PanoramicData.NCalc101/Components/Pages/Home.razor.js");
+				_module = await JS.InvokeAsync<IJSObjectReference>("import", "./Components/Pages/Home.razor.js");
+				if (_module != null)
+				{
+					await _module.InvokeVoidAsync("configureMonaco", _objRef);
+				}
+			}
+
+			//_monacoMethodCache.DescriptionProvider = MethodDescriptionProvider;
+
+			// add NCalc methods
+			_monacoMethodCache.AddPublicStaticTypeMethods(EDITOR_LANGUAGE, typeof(Math));
+			_monacoMethodCache.AddTypeMethods(EDITOR_LANGUAGE, typeof(NCalcExtensions.Extensions.IFunctionPrototypes));
+		}
+	}
+
+	#endregion
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -58,7 +157,6 @@ public partial class Home
 				NavigationManager.NavigateTo($"?workspace={WorkspaceService.Workspace.Name}", false);
 				await _table!.RefreshAsync();
 				_expression = WorkspaceService.Workspace.Expression ?? string.Empty;
-				_expression2 = WorkspaceService.Workspace.Expression ?? string.Empty;
 				//_enableWorkspaceDelete = WorkspaceService.Workspace.Name != "default";
 				await EvaluateAsync();
 				StateHasChanged();
@@ -104,7 +202,6 @@ public partial class Home
 	{
 		await _table!.RefreshAsync();
 		_expression = WorkspaceService.Workspace.Expression ?? string.Empty;
-		_expression2 = WorkspaceService.Workspace.Expression ?? string.Empty;
 		await EvaluateAsync();
 		StateHasChanged();
 	}
@@ -289,8 +386,7 @@ public partial class Home
 	private async Task OnExpressionChangedAsync(string expression)
 	{
 		await WorkspaceService.SetExpressionAsync(expression, default);
-		_expression = _expression2 = expression;
-
+		_expression = expression;
 		await EvaluateAsync();
 	}
 

@@ -22,15 +22,21 @@
         <div class="loading-progress-text"></div>
     </div>
 
-    <div id="blazor-error-ui">
+    <!--<div id="blazor-error-ui">
         An unhandled error has occurred.
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
-    </div>
+    </div>-->
     <script src="_framework/blazor.webassembly.js"></script>
     <script src="lib/popper.js/umd/popper.min.js"></script>
     <script src="bootstrap/js/bootstrap.min.js"></script>
     <script src="download.js"></script>
+
+    <!-- Monaco support -->
+    <script src="_content/BlazorMonaco/jsInterop.js"></script>
+    <script src="_content/BlazorMonaco/lib/monaco-editor/min/vs/loader.js"></script>
+    <script src="_content/BlazorMonaco/lib/monaco-editor/min/vs/editor/editor.main.js"></script>
+
 </body>
 
 </html>

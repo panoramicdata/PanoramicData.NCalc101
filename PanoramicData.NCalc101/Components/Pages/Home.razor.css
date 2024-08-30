@@ -11,3 +11,23 @@
 	width: 100vw;
 	height: 100vh;
 }
+
+/* ---------------- Monaco Editor related ----------------------- */
+.ncalc-input {
+	display: grid;
+	grid-template-columns: minmax(0px, auto);
+	height: 100%;
+
+}
+
+::deep .monaco-editor-container {
+	height: 110px;
+	border: 1px solid silver;
+}
+
+/* increase default height content larger displays */
+@media (min-width: 992px) {
+	::deep .monaco-editor-container {
+		height: 254px;
+	}
+}
